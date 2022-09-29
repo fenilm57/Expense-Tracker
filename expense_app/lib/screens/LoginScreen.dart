@@ -24,8 +24,10 @@ class LoginScreen extends StatelessWidget {
               child: Text('Something Went Wrong!'),
             );
           }
-
-          return LoginButton();
+          return Container(
+            color: const Color.fromRGBO(50, 75, 205, 1),
+            child: LoginButton(),
+          );
         }),
       ),
     );
