@@ -30,6 +30,13 @@ class NavigationDrawerWidget extends StatelessWidget {
             voidCallback: () {},
           ),
           SingleNavItem(
+            text: 'Savings',
+            icon: Icons.savings,
+            voidCallback: () {
+              provider.logout();
+            },
+          ),
+          SingleNavItem(
             text: 'Logout',
             icon: Icons.logout,
             voidCallback: () {
@@ -58,7 +65,7 @@ class SingleNavItem extends StatelessWidget {
     return GestureDetector(
       onTap: voidCallback,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.only(left: 8),
         child: ListTile(
           leading: Icon(
             icon,
