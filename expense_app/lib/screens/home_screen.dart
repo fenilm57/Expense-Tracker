@@ -1,5 +1,9 @@
+import 'dart:ffi';
 import 'dart:ui';
 
+import 'package:expense_app/provider/categories_list.dart';
+import 'package:expense_app/widget/CustomElevatedButton.dart';
+import 'package:expense_app/widget/CustomTextField.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +20,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController namecontroller = TextEditingController();
+  TextEditingController budgetcontroller = TextEditingController();
+  bool impNote = false;
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -29,16 +36,84 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            final provider =
-                Provider.of<GoogleSignInProvider>(context, listen: false);
-            provider.logout();
-          },
-          child: const Text('Log out'),
-        ),
+      body: Center(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          bottomSheetCategories(context);
+        },
+        child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Future<dynamic> bottomSheetCategories(BuildContext context) {
+    final provider = Provider.of<CatagoriesList>(context, listen: false);
+    return showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      builder: (context) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Add Category",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextField(
+                controller: namecontroller,
+                hintText: 'Category Name',
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextField(
+                controller: budgetcontroller,
+                hintText: 'Budget Optional',
+                textInputType: TextInputType.number,
+              ),
+            ),
+            StatefulBuilder(
+              builder: (BuildContext context, StateSetter stateSetter) {
+                return Switch(
+                  value: impNote,
+                  onChanged: (val) {
+                    stateSetter(() {
+                      impNote = val;
+                      print(impNote);
+                    });
+                  },
+                );
+              },
+            ),
+            CustomElevatedButton(
+              text: 'Add Category',
+              onPressed: () {
+                double budget;
+                if (budgetcontroller.text == '') {
+                  budget = 0;
+                } else {
+                  budget = double.parse(budgetcontroller.text);
+                }
+                provider.addCategories(
+                  name: namecontroller.text,
+                  budget: budget,
+                  imp: impNote,
+                );
+                namecontroller.clear();
+                budgetcontroller.clear();
+                print(provider.categories[0].name);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

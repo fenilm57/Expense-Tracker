@@ -1,4 +1,5 @@
 import 'package:expense_app/auth/google_signin.dart';
+import 'package:expense_app/provider/categories_list.dart';
 import 'package:expense_app/screens/LoginScreen.dart';
 import 'package:expense_app/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,10 +24,21 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => GoogleSignInProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CatagoriesList(),
+        ),
       ],
       child: MaterialApp(
+        theme: ThemeData().copyWith(
+          textTheme: const TextTheme(
+            titleLarge: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+          ),
+        ),
         debugShowCheckedModeBanner: false,
-        darkTheme: ThemeData.dark(),
         routes: {
           '/': (ctx) => LoginScreen(),
         },
