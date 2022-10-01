@@ -23,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController budgetcontroller = TextEditingController();
   bool impNote = false;
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -74,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: CustomTextField(
                 controller: budgetcontroller,
-                hintText: 'Budget Optional',
+                hintText: 'Budget (Optional)',
                 textInputType: TextInputType.number,
               ),
             ),
@@ -93,23 +94,25 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             CustomElevatedButton(
               text: 'Add Category',
-              onPressed: () {
-                double budget;
-                if (budgetcontroller.text == '') {
-                  budget = 0;
-                } else {
-                  budget = double.parse(budgetcontroller.text);
-                }
-                provider.addCategories(
-                  name: namecontroller.text,
-                  budget: budget,
-                  imp: impNote,
-                );
-                namecontroller.clear();
-                budgetcontroller.clear();
-                print(provider.categories[0].name);
-                Navigator.pop(context);
-              },
+              onPressed: namecontroller.value.text.isNotEmpty
+                  ? () {
+                      double budget;
+                      if (budgetcontroller.text == '') {
+                        budget = 0;
+                      } else {
+                        budget = double.parse(budgetcontroller.text);
+                      }
+                      provider.addCategories(
+                        name: namecontroller.text,
+                        budget: budget,
+                        imp: impNote,
+                      );
+                      namecontroller.clear();
+                      budgetcontroller.clear();
+                      print(provider.categories[0].name);
+                      Navigator.pop(context);
+                    }
+                  : null,
             ),
           ],
         );
