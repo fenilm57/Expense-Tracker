@@ -27,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
+    final categoriesProvider =
+        Provider.of<CatagoriesList>(context, listen: false);
+
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
       drawer: const NavigationDrawerWidget(),
@@ -37,7 +40,20 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: Center(),
+      body: GridView.builder(
+          itemCount: categoriesProvider.categories.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2),
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                width: 50,
+                height: 50,
+                color: Colors.amber,
+              ),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           bottomSheetCategories(context);
@@ -86,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (val) {
                     stateSetter(() {
                       impNote = val;
-                      print(impNote);
                     });
                   },
                 );
@@ -102,14 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       } else {
                         budget = double.parse(budgetcontroller.text);
                       }
-                      provider.addCategories(
-                        name: namecontroller.text,
-                        budget: budget,
-                        imp: impNote,
-                      );
+                      setState(() {
+                        provider.addCategories(
+                          name: namecontroller.text,
+                          budget: budget,
+                          imp: impNote,
+                        );
+                      });
+
                       namecontroller.clear();
                       budgetcontroller.clear();
-                      print(provider.categories[0].name);
                       Navigator.pop(context);
                     }
                   : null,
