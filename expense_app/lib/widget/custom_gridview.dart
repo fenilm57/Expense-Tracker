@@ -25,42 +25,51 @@ class CustomGridView extends StatelessWidget {
                 builder: (context) => SingleExpenseScreen(index: index)),
           );
         },
-        child: GridTile(
-          footer: GridTileBar(
-            backgroundColor: Colors.black54,
-          ),
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.purple, Colors.blue],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: GridTile(
+            footer: GridTileBar(
+              leading: GestureDetector(
+                child: const Icon(Icons.edit, size: 30),
+                onTap: () {},
               ),
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
+              title: const SizedBox(
+                width: 50,
+              ),
+              trailing: GestureDetector(
+                child: const Icon(Icons.delete, size: 30),
+                onTap: () {},
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  categories[index].name.toUpperCase(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28,
-                    color: Colors.amber,
-                  ),
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.purple, Colors.blue],
                 ),
-                Text(
-                  categories[index].budget.toString(),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28,
-                    color: Colors.amber,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    categories[index].name.toUpperCase(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: Colors.amber,
+                    ),
                   ),
-                ),
-              ],
+                  Text(
+                    categories[index].budget.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 28,
+                      color: Colors.amber,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
