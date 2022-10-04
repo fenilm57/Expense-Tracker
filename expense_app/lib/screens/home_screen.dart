@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:expense_app/provider/categories_list.dart';
 import 'package:expense_app/widget/CustomElevatedButton.dart';
 import 'package:expense_app/widget/CustomTextField.dart';
+import 'package:expense_app/widget/custom_gridview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,16 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: GridView.builder(
           itemCount: categoriesProvider.categories.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2),
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 250,
+            mainAxisExtent: 180,
+          ),
           itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                width: 50,
-                height: 50,
-                color: Colors.amber,
-              ),
+            return SizedBox(
+              width: 10,
+              height: 10,
+              child: CustomGridView(index: index),
             );
           }),
       floatingActionButton: FloatingActionButton(
