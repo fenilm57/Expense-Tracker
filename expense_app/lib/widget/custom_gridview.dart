@@ -1,7 +1,8 @@
+import 'dart:ui';
+
 import 'package:expense_app/screens/SingleExpense.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../provider/categories_list.dart';
 import 'CustomElevatedButton.dart';
 import 'CustomTextField.dart';
@@ -21,10 +22,15 @@ class _CustomGridViewState extends State<CustomGridView> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController budgetcontroller = TextEditingController();
   bool impNote = false;
+  void insertDataIntoController() {
+    print(namecontroller.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final categories =
         Provider.of<CatagoriesList>(context, listen: false).categories;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -42,6 +48,9 @@ class _CustomGridViewState extends State<CustomGridView> {
               leading: GestureDetector(
                 child: const Icon(Icons.edit, size: 30),
                 onTap: () {
+                  namecontroller.text = categories[widget.index].name;
+                  budgetcontroller.text =
+                      categories[widget.index].budget.toString();
                   bottomSheetCategories(context);
                 },
               ),
@@ -58,7 +67,10 @@ class _CustomGridViewState extends State<CustomGridView> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.purple, Colors.blue],
+                  colors: [
+                    Colors.purple,
+                    Colors.blue,
+                  ],
                 ),
               ),
               child: Column(
@@ -123,13 +135,26 @@ class _CustomGridViewState extends State<CustomGridView> {
             ),
             StatefulBuilder(
               builder: (BuildContext context, StateSetter stateSetter) {
-                return Switch(
-                  value: impNote,
-                  onChanged: (val) {
-                    stateSetter(() {
-                      impNote = val;
-                    });
-                  },
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "IMP",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Switch(
+                      value: impNote,
+                      onChanged: (val) {
+                        stateSetter(() {
+                          impNote = val;
+                        });
+                      },
+                    ),
+                  ],
                 );
               },
             ),
@@ -144,10 +169,11 @@ class _CustomGridViewState extends State<CustomGridView> {
                         budget = double.parse(budgetcontroller.text);
                       }
                       setState(() {
-                        provider.addCategories(
+                        provider.updateCategories(
                           name: namecontroller.text,
                           budget: budget,
                           imp: impNote,
+                          index: widget.index,
                         );
                       });
 

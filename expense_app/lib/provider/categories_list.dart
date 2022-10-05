@@ -18,4 +18,16 @@ class CatagoriesList extends ChangeNotifier {
     _categories.removeAt(index);
     notifyListeners();
   }
+
+  void updateCategories({
+    required String name,
+    double budget = 0.0,
+    bool imp = false,
+    required int index,
+  }) {
+    // Update Category that user changed
+    _categories.insert(
+        index, Category(name: name, budget: budget, impCategory: imp));
+    notifyListeners();
+  }
 }

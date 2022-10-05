@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
-      drawer: const NavigationDrawerWidget(),
+      drawer: NavigationDrawerWidget(),
       appBar: AppBar(
         title: const Text(
           'Expense App',
@@ -97,13 +97,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             StatefulBuilder(
               builder: (BuildContext context, StateSetter stateSetter) {
-                return Switch(
-                  value: impNote,
-                  onChanged: (val) {
-                    stateSetter(() {
-                      impNote = val;
-                    });
-                  },
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      "IMP",
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Switch(
+                      value: impNote,
+                      onChanged: (val) {
+                        stateSetter(() {
+                          impNote = val;
+                        });
+                      },
+                    ),
+                  ],
                 );
               },
             ),
