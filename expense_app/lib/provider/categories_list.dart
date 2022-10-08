@@ -6,11 +6,13 @@ class CatagoriesList extends ChangeNotifier {
   List<Category> get categories => _categories;
 
   void addCategories({
+    required String id,
     required String name,
     double budget = 0.0,
     bool imp = false,
   }) {
-    _categories.add(Category(name: name, budget: budget, impCategory: imp));
+    _categories
+        .add(Category(id: id, name: name, budget: budget, impCategory: imp));
     notifyListeners();
   }
 
@@ -20,6 +22,7 @@ class CatagoriesList extends ChangeNotifier {
   }
 
   void updateCategories({
+    required String id,
     required String name,
     double budget = 0.0,
     bool imp = false,
@@ -27,7 +30,7 @@ class CatagoriesList extends ChangeNotifier {
   }) {
     // Update Category that user changed
     _categories.insert(
-        index, Category(name: name, budget: budget, impCategory: imp));
+        index, Category(id: id, name: name, budget: budget, impCategory: imp));
     notifyListeners();
   }
 }

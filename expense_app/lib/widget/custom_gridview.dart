@@ -9,9 +9,11 @@ import 'CustomTextField.dart';
 
 class CustomGridView extends StatefulWidget {
   final int index;
+  final VoidCallback deleteCategory;
   const CustomGridView({
     super.key,
     required this.index,
+    required this.deleteCategory,
   });
 
   @override
@@ -30,7 +32,8 @@ class _CustomGridViewState extends State<CustomGridView> {
   Widget build(BuildContext context) {
     final categories =
         Provider.of<CatagoriesList>(context, listen: false).categories;
-
+    final categoriesProvider =
+        Provider.of<CatagoriesList>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
@@ -59,7 +62,10 @@ class _CustomGridViewState extends State<CustomGridView> {
               ),
               trailing: GestureDetector(
                 child: const Icon(Icons.delete, size: 30),
-                onTap: () {},
+                onTap: () {
+                  // showDeleteDialog(context, categoriesProvider);
+                  widget.deleteCategory();
+                },
               ),
             ),
             child: Container(
@@ -97,6 +103,46 @@ class _CustomGridViewState extends State<CustomGridView> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Future<dynamic> showDeleteDialog(
+      BuildContext context, CatagoriesList categoriesProvider) {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Are you sure?"),
+        content: const Text(
+          "You want to delete this?",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              child: const Text("No"),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                categoriesProvider.removeCategory(widget.index);
+              });
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              child: const Text("Yes"),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -170,6 +216,7 @@ class _CustomGridViewState extends State<CustomGridView> {
                       }
                       setState(() {
                         provider.updateCategories(
+                          id: (widget.index).toString(),
                           name: namecontroller.text,
                           budget: budget,
                           imp: impNote,

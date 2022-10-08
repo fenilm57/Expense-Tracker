@@ -51,7 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
             return SizedBox(
               width: 10,
               height: 10,
-              child: CustomGridView(index: index),
+              child: CustomGridView(
+                  index: index,
+                  deleteCategory: () {
+                    setState(() {
+                      categoriesProvider.removeCategory(index);
+                    });
+                  }),
             );
           }),
       floatingActionButton: FloatingActionButton(
@@ -132,6 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
                       setState(() {
                         provider.addCategories(
+                          id: provider.categories.length.toString(),
                           name: namecontroller.text,
                           budget: budget,
                           imp: impNote,
