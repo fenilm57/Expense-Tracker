@@ -2,7 +2,7 @@ import 'package:expense_app/models/category.dart';
 import 'package:flutter/material.dart';
 
 class CatagoriesList extends ChangeNotifier {
-  List<Category> _categories = [];
+  final List<Category> _categories = [];
   List<Category> get categories => _categories;
 
   void addCategories({
