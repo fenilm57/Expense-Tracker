@@ -63,8 +63,7 @@ class _CustomGridViewState extends State<CustomGridView> {
               trailing: GestureDetector(
                 child: const Icon(Icons.delete, size: 30),
                 onTap: () {
-                  // showDeleteDialog(context, categoriesProvider);
-                  widget.deleteCategory();
+                  showDeleteDialog(context, categoriesProvider);
                 },
               ),
             ),
@@ -133,7 +132,7 @@ class _CustomGridViewState extends State<CustomGridView> {
           TextButton(
             onPressed: () {
               setState(() {
-                categoriesProvider.removeCategory(widget.index);
+                widget.deleteCategory();
               });
               Navigator.of(ctx).pop();
             },
