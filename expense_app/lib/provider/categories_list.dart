@@ -28,9 +28,9 @@ class CatagoriesList extends ChangeNotifier {
     bool imp = false,
     required int index,
   }) {
-    // Update Category that user changed
-    _categories.insert(
-        index, Category(id: id, name: name, budget: budget, impCategory: imp));
+    _categories[index] =
+        Category(id: id, name: name, budget: budget, impCategory: imp);
+
     notifyListeners();
   }
 }
