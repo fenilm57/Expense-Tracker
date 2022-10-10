@@ -11,7 +11,14 @@ class ExpenseList extends ChangeNotifier {
     required String date,
     required double spent,
   }) {
-    _expenses.add(Expense(id: id, name: name, spent: spent, date: date));
+    _expenses.add(
+      Expense(
+        id: id,
+        name: name,
+        spent: spent,
+        date: date,
+      ),
+    );
     notifyListeners();
   }
 
