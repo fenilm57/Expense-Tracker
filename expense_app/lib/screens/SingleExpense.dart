@@ -42,10 +42,21 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Container(
-              height: 50,
-              width: 50,
-              color: Colors.blue,
+            child: ListTile(
+              tileColor: Colors.black,
+              leading: const CircleAvatar(
+                backgroundColor: Colors.green,
+                radius: 30,
+              ),
+              title: Text(
+                expenses[index].name,
+              ),
+              subtitle: Text(
+                expenses[index].date,
+              ),
+              trailing: Text(
+                expenses[index].spent.toString(),
+              ),
             ),
           );
         },
@@ -93,7 +104,7 @@ class _AddExpenseState extends State<AddExpense> {
           Padding(
             padding: const EdgeInsets.only(top: 35),
             child: Text(
-              "Add Category",
+              "Add Expense",
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -101,7 +112,7 @@ class _AddExpenseState extends State<AddExpense> {
             padding: const EdgeInsets.all(8.0),
             child: CustomTextField(
               controller: namecontroller,
-              hintText: 'Category Name',
+              hintText: 'Expense Name',
             ),
           ),
           Padding(
