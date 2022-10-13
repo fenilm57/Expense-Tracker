@@ -54,9 +54,11 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                   onTap: () {
                     //
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: ((context) => BigImage(index: index))));
+                      context,
+                      MaterialPageRoute(
+                        builder: ((context) => BigImage(index: index)),
+                      ),
+                    );
                   },
                   child: CircleAvatar(
                     backgroundImage: FileImage(expenses[index].image),
@@ -66,6 +68,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
               ),
               title: Text(
                 expenses[index].name,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               subtitle: Text(
                 expenses[index].date,
@@ -205,10 +208,15 @@ class _AddExpenseState extends State<AddExpense> {
               },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(40),
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: FileImage(image!),
-                ),
+                child: image?.path.length == null
+                    ? const CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.green,
+                      )
+                    : CircleAvatar(
+                        radius: 40,
+                        backgroundImage: FileImage(image!),
+                      ),
               ),
             ),
             CustomElevatedButton(
