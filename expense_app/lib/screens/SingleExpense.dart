@@ -50,9 +50,18 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
               tileColor: Colors.lightBlue,
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(40),
-                child: CircleAvatar(
-                  backgroundImage: FileImage(expenses[index].image),
-                  radius: 40,
+                child: GestureDetector(
+                  onTap: () {
+                    //
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: ((context) => BigImage(index: index))));
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: FileImage(expenses[index].image),
+                    radius: 40,
+                  ),
                 ),
               ),
               title: Text(
@@ -227,5 +236,30 @@ class _AddExpenseState extends State<AddExpense> {
         ),
       ),
     );
+  }
+}
+
+class BigImage extends StatelessWidget {
+  final int index;
+  const BigImage({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    final expenses = Provider.of<ExpenseList>(context, listen: false).expenses;
+
+    return Scaffold(
+        body: SizedBox(
+      height: double.infinity,
+      width: double.infinity,
+      child: InteractiveViewer(
+        panEnabled: false, // Set it to false
+        boundaryMargin: EdgeInsets.all(100),
+        minScale: 0.5,
+        maxScale: 2,
+        child: Image.file(
+          expenses[index].image,
+        ),
+      ),
+    ));
   }
 }
