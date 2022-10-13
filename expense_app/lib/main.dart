@@ -40,6 +40,11 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.bold,
               color: Colors.black54,
             ),
+            bodyLarge: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
         debugShowCheckedModeBanner: false,

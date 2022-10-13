@@ -39,8 +39,8 @@ class ExpenseList extends ChangeNotifier {
     required File image,
     required int index,
   }) {
-    _expenses.insert(index,
-        Expense(id: id, name: name, spent: spent, date: date, image: image));
+    _expenses[index] =
+        Expense(id: id, name: name, spent: spent, date: date, image: image);
     notifyListeners();
   }
 }
