@@ -1,7 +1,11 @@
-import 'package:expense_app/provider/expense_list.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'dart:io';
 
+import 'package:expense_app/provider/expense_list.dart';
+import 'package:expense_app/widget/select_image_button.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../provider/categories_list.dart';
 import '../widget/CustomElevatedButton.dart';
 import '../widget/CustomTextField.dart';
@@ -43,10 +47,13 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: ListTile(
-              tileColor: Colors.black,
-              leading: const CircleAvatar(
-                backgroundColor: Colors.green,
-                radius: 30,
+              tileColor: Colors.lightBlue,
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: CircleAvatar(
+                  backgroundImage: FileImage(expenses[index].image),
+                  radius: 40,
+                ),
               ),
               title: Text(
                 expenses[index].name,
@@ -95,63 +102,129 @@ class _AddExpenseState extends State<AddExpense> {
     }
   }
 
+  File? image;
+
+  Future showModalSheetForImagePicking(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            height: 200,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 18.0),
+                  child: SelectPhoto(
+                    textLabel: 'Camera',
+                    icon: Icons.camera,
+                    onTap: () {
+                      pickImage(ImageSource.camera);
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SelectPhoto(
+                  textLabel: 'Gallery',
+                  icon: Icons.image,
+                  onTap: () {
+                    pickImage(ImageSource.gallery);
+                  },
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  Future pickImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+      File? imageTemp = File(image.path);
+      setState(() => this.image = imageTemp);
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ExpenseList>(context, listen: false);
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 35),
-            child: Text(
-              "Add Expense",
-              style: Theme.of(context).textTheme.titleLarge,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 35),
+              child: Text(
+                "Add Expense",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomTextField(
-              controller: namecontroller,
-              hintText: 'Expense Name',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextField(
+                controller: namecontroller,
+                hintText: 'Expense Name',
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomTextField(
-              controller: spentcontroller,
-              hintText: 'Money Spent',
-              textInputType: TextInputType.number,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextField(
+                controller: spentcontroller,
+                hintText: 'Money Spent',
+                textInputType: TextInputType.number,
+              ),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                selectDate(context);
-              });
-            },
-            child: Text(date),
-          ),
-          CustomElevatedButton(
-            text: 'Add Category',
-            onPressed: (namecontroller.value.text.isNotEmpty &&
-                    spentcontroller.value.text.isNotEmpty)
-                ? () {
-                    setState(() {
-                      // Add expense
-                      provider.addExpense(
-                        id: 'id',
-                        name: namecontroller.text,
-                        date: date,
-                        spent: double.parse(spentcontroller.text),
-                      );
-                    });
-                    namecontroller.clear();
-                    spentcontroller.clear();
-                    Navigator.pop(context);
-                  }
-                : null,
-          ),
-        ],
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  selectDate(context);
+                });
+              },
+              child: Text(date),
+            ),
+            // Image will be here
+
+            GestureDetector(
+              onTap: () {
+                print(image?.path.length);
+                showModalSheetForImagePicking(context);
+                print(image?.path.length);
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundImage: FileImage(image!),
+                ),
+              ),
+            ),
+            CustomElevatedButton(
+              text: 'Add Category',
+              onPressed: (namecontroller.value.text.isNotEmpty &&
+                      spentcontroller.value.text.isNotEmpty)
+                  ? () {
+                      print(image!.path.toString());
+                      setState(() {
+                        // Add expense
+                        provider.addExpense(
+                            id: 'id',
+                            name: namecontroller.text,
+                            date: date,
+                            spent: double.parse(spentcontroller.text),
+                            image: image!);
+                      });
+                      namecontroller.clear();
+                      spentcontroller.clear();
+                      Navigator.pop(context);
+                    }
+                  : null,
+            ),
+          ],
+        ),
       ),
     );
   }
