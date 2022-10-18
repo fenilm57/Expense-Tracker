@@ -23,6 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController budgetcontroller = TextEditingController();
+  bool isLoading = false;
   bool impNote = false;
 
   @override
@@ -41,25 +42,29 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         centerTitle: true,
       ),
-      body: GridView.builder(
-          itemCount: categoriesProvider.categories.length,
-          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 250,
-            mainAxisExtent: 180,
-          ),
-          itemBuilder: (context, index) {
-            return SizedBox(
-              width: 10,
-              height: 10,
-              child: CustomGridView(
-                  index: index,
-                  deleteCategory: () {
-                    setState(() {
-                      categoriesProvider.removeCategory(index);
-                    });
-                  }),
-            );
-          }),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : GridView.builder(
+              itemCount: categoriesProvider.categories.length,
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 250,
+                mainAxisExtent: 180,
+              ),
+              itemBuilder: (context, index) {
+                return SizedBox(
+                  width: 10,
+                  height: 10,
+                  child: CustomGridView(
+                      index: index,
+                      deleteCategory: () {
+                        setState(() {
+                          categoriesProvider.removeCategory(index);
+                        });
+                      }),
+                );
+              }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           bottomSheetCategories(context);
@@ -130,24 +135,31 @@ class _HomeScreenState extends State<HomeScreen> {
               text: 'Add Category',
               onPressed: namecontroller.value.text.isNotEmpty
                   ? () {
+                      Navigator.pop(context);
+                      setState(() {
+                        isLoading = true;
+                      });
                       double budget;
                       if (budgetcontroller.text == '') {
                         budget = 0;
                       } else {
                         budget = double.parse(budgetcontroller.text);
                       }
-                      setState(() {
-                        provider.addCategories(
-                          id: provider.categories.length.toString(),
-                          name: namecontroller.text,
-                          budget: budget,
-                          imp: impNote,
-                        );
+                      // Adding category
+                      provider
+                          .addCategories(
+                        id: provider.categories.length.toString(),
+                        name: namecontroller.text,
+                        budget: budget,
+                        imp: impNote,
+                      )
+                          .then((value) {
+                        setState(() {
+                          isLoading = false;
+                        });
+                        namecontroller.clear();
+                        budgetcontroller.clear();
                       });
-
-                      namecontroller.clear();
-                      budgetcontroller.clear();
-                      Navigator.pop(context);
                     }
                   : null,
             ),

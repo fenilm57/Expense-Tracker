@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:expense_app/provider/expense_list.dart';
 import 'package:expense_app/widget/select_image_button.dart';
 import 'package:flutter/material.dart';
@@ -289,7 +288,7 @@ class _AddExpenseState extends State<AddExpense> {
               ),
             ),
             CustomElevatedButton(
-              text: 'Add Category',
+              text: 'Add Expense',
               onPressed: (namecontroller.value.text.isNotEmpty &&
                       spentcontroller.value.text.isNotEmpty)
                   ? () {
