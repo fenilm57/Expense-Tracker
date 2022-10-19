@@ -25,12 +25,16 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController budgetcontroller = TextEditingController();
   bool isLoading = false;
   bool impNote = false;
+  final snackBar = const SnackBar(
+    content: Text('Yay! A SnackBar!'),
+  );
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     final categoriesProvider =
         Provider.of<CatagoriesList>(context, listen: false);
+    final dialogContext = context;
 
     final user = FirebaseAuth.instance.currentUser!;
     return Scaffold(
@@ -67,14 +71,15 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          bottomSheetCategories(context);
+          bottomSheetCategories(context, dialogContext);
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Future<dynamic> bottomSheetCategories(BuildContext context) {
+  Future<dynamic> bottomSheetCategories(
+      BuildContext context, BuildContext dialogContext) {
     final provider = Provider.of<CatagoriesList>(context, listen: false);
     return showModalBottomSheet(
       context: context,
@@ -153,7 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         budget: budget,
                         imp: impNote,
                       )
-                          .then((value) {
+                          .catchError((error) {
+                        showDialogError(dialogContext);
+                      }).then((value) {
                         setState(() {
                           isLoading = false;
                         });
@@ -167,5 +174,32 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  Future<dynamic> showDialogError(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: const Text(
+                'Error!',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              content: const Text(
+                'Something went wrong!',
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Okay'),
+                )
+              ],
+            ));
   }
 }

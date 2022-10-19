@@ -35,6 +35,9 @@ class CatagoriesList extends ChangeNotifier {
         ),
       );
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
   }
 
