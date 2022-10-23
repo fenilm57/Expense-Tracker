@@ -204,23 +204,26 @@ class _CustomGridViewState extends State<CustomGridView> {
               },
             ),
             CustomElevatedButton(
-              text: 'Add Category',
+              text: 'Update Category',
               onPressed: namecontroller.value.text.isNotEmpty
-                  ? () {
+                  ? () async {
                       double budget;
                       if (budgetcontroller.text == '') {
                         budget = 0;
                       } else {
                         budget = double.parse(budgetcontroller.text);
                       }
-                      setState(() {
-                        provider.updateCategories(
-                          id: (widget.index).toString(),
-                          name: namecontroller.text,
-                          budget: budget,
-                          imp: impNote,
-                          index: widget.index,
-                        );
+
+                      await provider
+                          .updateCategories(
+                        id: provider.categories[widget.index].id,
+                        name: namecontroller.text,
+                        budget: budget,
+                        imp: impNote,
+                        index: widget.index,
+                      )
+                          .then((value) {
+                        setState(() {});
                       });
 
                       namecontroller.clear();

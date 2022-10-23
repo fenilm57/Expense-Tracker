@@ -30,6 +30,25 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      isLoading = true;
+    });
+    Provider.of<CatagoriesList>(context, listen: false)
+        .fetchandSetData()
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  Future<void> refreshPage(BuildContext context) async {
+    await Provider.of<CatagoriesList>(context, listen: false).fetchandSetData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     final categoriesProvider =
@@ -50,25 +69,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : GridView.builder(
-              itemCount: categoriesProvider.categories.length,
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250,
-                mainAxisExtent: 180,
-              ),
-              itemBuilder: (context, index) {
-                return SizedBox(
-                  width: 10,
-                  height: 10,
-                  child: CustomGridView(
-                      index: index,
-                      deleteCategory: () {
-                        setState(() {
-                          categoriesProvider.removeCategory(index);
-                        });
-                      }),
-                );
-              }),
+          : RefreshIndicator(
+              onRefresh: () {
+                return refreshPage(context).then((value) {
+                  setState(() {});
+                });
+              },
+              child: GridView.builder(
+                  itemCount: categoriesProvider.categories.length,
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 250,
+                    mainAxisExtent: 180,
+                  ),
+                  itemBuilder: (context, index) {
+                    return SizedBox(
+                      width: 10,
+                      height: 10,
+                      child: CustomGridView(
+                          index: index,
+                          deleteCategory: () {
+                            setState(() {
+                              categoriesProvider.removeCategory(index);
+                            });
+                          }),
+                    );
+                  }),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           bottomSheetCategories(context, dialogContext);
@@ -153,7 +179,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Adding category
                       provider
                           .addCategories(
-                        id: provider.categories.length.toString(),
                         name: namecontroller.text,
                         budget: budget,
                         imp: impNote,
