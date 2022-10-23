@@ -3,6 +3,8 @@ import 'package:expense_app/widget/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'AuthScreen.dart';
+
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -26,7 +28,7 @@ class LoginScreen extends StatelessWidget {
           }
           return Container(
             color: const Color.fromRGBO(50, 75, 205, 1),
-            child: LoginButton(),
+            child: AuthScreen(),
           );
         }),
       ),

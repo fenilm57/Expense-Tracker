@@ -12,26 +12,22 @@ class CatagoriesList extends ChangeNotifier {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories.json');
 
-    try {
-      final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      final List<Category> loadedCategories = [];
+    final response = await http.get(url);
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    final List<Category> loadedCategories = [];
 
-      extractedData.forEach((id, categoryValue) {
-        loadedCategories.add(
-          Category(
-            id: id,
-            name: categoryValue['categoryName'],
-            budget: categoryValue['budget'],
-            impCategory: categoryValue['impCategory'],
-          ),
-        );
-      });
-      _categories = loadedCategories;
-      notifyListeners();
-    } catch (error) {
-      print(error);
-    }
+    extractedData.forEach((id, categoryValue) {
+      loadedCategories.add(
+        Category(
+          id: id,
+          name: categoryValue['categoryName'] as String,
+          budget: categoryValue['budget'],
+          impCategory: categoryValue['impCategory'],
+        ),
+      );
+    });
+    _categories = loadedCategories;
+    notifyListeners();
   }
 
   Future<void> addCategories({
@@ -50,7 +46,7 @@ class CatagoriesList extends ChangeNotifier {
               'impCategory': imp,
             }))
         .then((value) {
-      print(json.decode(value.body)['name']);
+      print("json.decode(value.body)['name']");
       _categories.add(
         Category(
           id: json.decode(value.body)['name'],
@@ -60,9 +56,6 @@ class CatagoriesList extends ChangeNotifier {
         ),
       );
       notifyListeners();
-    }).catchError((error) {
-      print(error);
-      throw error;
     });
   }
 
