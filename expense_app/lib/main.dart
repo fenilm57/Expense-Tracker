@@ -52,9 +52,12 @@ class MyApp extends StatelessWidget {
           ),
         ),
         debugShowCheckedModeBanner: false,
-        routes: {
-          '/': (ctx) => LoginScreen(),
-        },
+        home: Consumer<Auth>(builder: (ctx, auth, _) {
+          if (auth.isAuth) {
+            return HomeScreen();
+          }
+          return LoginScreen();
+        }),
       ),
     );
   }

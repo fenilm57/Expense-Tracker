@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Provider.of<CatagoriesList>(context, listen: false);
     final dialogContext = context;
 
-    final user = FirebaseAuth.instance.currentUser!;
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
       drawer: NavigationDrawerWidget(),
       appBar: AppBar(

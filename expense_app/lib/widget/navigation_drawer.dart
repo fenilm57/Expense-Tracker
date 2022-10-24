@@ -11,7 +11,6 @@ class NavigationDrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
-
     return Drawer(
       child: Container(
         color: const Color.fromRGBO(50, 75, 205, 1),
@@ -95,6 +94,7 @@ class HeaderNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('User: $user');
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Container(

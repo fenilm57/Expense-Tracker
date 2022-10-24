@@ -62,7 +62,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 onPressed: () {
                   if (showConfirmPassword == false) {
                     Provider.of<Auth>(context, listen: false)
-                        .signup(_email.text, _password.text)
+                        .signIn(_email.text, _password.text)
                         .catchError((error) {
                       showDialog(
                         context: context,
@@ -84,7 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   } else {
                     if (_password.text == _confirmPassword.text) {
                       Provider.of<Auth>(context, listen: false)
-                          .signIn(_email.text, _password.text)
+                          .signup(_email.text, _password.text)
                           .catchError((error) {
                         showDialog(
                           context: context,
