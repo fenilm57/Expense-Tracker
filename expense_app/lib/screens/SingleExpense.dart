@@ -130,6 +130,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                           builder: (context) => EditExpense(
                             index: index,
                             expenses: expenses,
+                            categoryId: widget.categoryId,
                           ),
                         ),
                       ).then((value) => setState(() {}));
@@ -140,7 +141,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                     onTap: () {
                       setState(() {
                         showDeleteDialog(context, () {
-                          provider.removeExpense(index);
+                          provider.removeExpense(index, widget.categoryId);
                         });
                       });
                     },
@@ -351,7 +352,13 @@ class BigImage extends StatelessWidget {
 class EditExpense extends StatefulWidget {
   final int index;
   final expenses;
-  const EditExpense({super.key, required this.index, required this.expenses});
+  final String categoryId;
+  const EditExpense({
+    super.key,
+    required this.index,
+    required this.expenses,
+    required this.categoryId,
+  });
 
   @override
   State<EditExpense> createState() => _EditExpenseState();
@@ -504,6 +511,7 @@ class _EditExpenseState extends State<EditExpense> {
                       setState(() {
                         // Add expense
                         provider.updateExpense(
+                          categoryId: widget.categoryId,
                           index: widget.index,
                           id: 'id',
                           name: namecontroller.text,

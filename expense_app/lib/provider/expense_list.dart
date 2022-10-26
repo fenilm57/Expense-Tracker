@@ -40,23 +40,35 @@ class ExpenseList extends ChangeNotifier {
     });
   }
 
-  void removeExpense(int index) async {
-    var id = _expenses[index].id;
+  Future<void> removeExpense(int index, String categoryId) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
-        '/categories/$id.json');
+        '/categories/$categoryId/expenses.json');
     await http.delete(url);
     _expenses.removeAt(index);
     notifyListeners();
   }
 
-  void updateExpense({
+  Future<void> updateExpense({
+    required String categoryId,
     required String id,
     required String name,
     required double spent,
     required String date,
     required File image,
     required int index,
-  }) {
+  }) async {
+    var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
+        '/categories/$categoryId/expenses.json');
+    await http.patch(
+      url,
+      body: json.encode(
+        {
+          'expenseName': name,
+          'date': date,
+          'spent': spent,
+        },
+      ),
+    );
     _expenses[index] =
         Expense(id: id, name: name, spent: spent, date: date, image: image);
     notifyListeners();
