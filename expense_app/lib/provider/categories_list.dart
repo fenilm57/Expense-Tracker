@@ -20,7 +20,7 @@ class CatagoriesList extends ChangeNotifier {
       loadedCategories.add(
         Category(
           id: id,
-          name: categoryValue['categoryName'] as String,
+          name: categoryValue['categoryName'],
           budget: categoryValue['budget'],
           impCategory: categoryValue['impCategory'],
         ),

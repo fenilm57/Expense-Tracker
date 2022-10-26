@@ -11,7 +11,9 @@ import '../widget/CustomTextField.dart';
 
 class SingleExpenseScreen extends StatefulWidget {
   final int index;
-  const SingleExpenseScreen({super.key, required this.index});
+  final String categoryId;
+  const SingleExpenseScreen(
+      {super.key, required this.index, required this.categoryId});
 
   @override
   State<SingleExpenseScreen> createState() => _SingleExpenseScreenState();
@@ -74,7 +76,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddExpense(),
+              builder: (context) => AddExpense(categoryId: widget.categoryId),
             ),
           ).then((value) => setState(() {}));
         },
@@ -154,7 +156,8 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
 }
 
 class AddExpense extends StatefulWidget {
-  const AddExpense({super.key});
+  final String categoryId;
+  const AddExpense({super.key, required this.categoryId});
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -291,17 +294,22 @@ class _AddExpenseState extends State<AddExpense> {
               text: 'Add Expense',
               onPressed: (namecontroller.value.text.isNotEmpty &&
                       spentcontroller.value.text.isNotEmpty)
-                  ? () {
+                  ? () async {
                       print(image!.path.toString());
-                      setState(() {
-                        // Add expense
-                        provider.addExpense(
-                            id: 'id',
-                            name: namecontroller.text,
-                            date: date,
-                            spent: double.parse(spentcontroller.text),
-                            image: image!);
+                      Provider.of<CatagoriesList>(context, listen: false)
+                          .categories;
+                      // Add expense
+                      await provider
+                          .addExpense(
+                              cateroryId: widget.categoryId,
+                              name: namecontroller.text,
+                              date: date,
+                              spent: double.parse(spentcontroller.text),
+                              image: image!)
+                          .then((value) {
+                        setState(() {});
                       });
+
                       namecontroller.clear();
                       spentcontroller.clear();
                       Navigator.pop(context);
