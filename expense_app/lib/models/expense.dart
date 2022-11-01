@@ -5,7 +5,7 @@ class Expense {
   final String name;
   final double spent;
   final String date;
-  final File image;
+  final String image;
   Expense({
     required this.id,
     required this.name,

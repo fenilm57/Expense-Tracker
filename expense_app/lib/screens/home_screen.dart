@@ -85,13 +85,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     return SizedBox(
                       width: 10,
                       height: 10,
-                      child: CustomGridView(
-                          index: index,
-                          deleteCategory: () {
-                            setState(() {
-                              categoriesProvider.removeCategory(index);
-                            });
-                          }),
+                      child: categoriesProvider.categories.isEmpty
+                          ? const Center(
+                              child: Text('No Expense Yet'),
+                            )
+                          : CustomGridView(
+                              index: index,
+                              deleteCategory: () {
+                                setState(() {
+                                  categoriesProvider.removeCategory(index);
+                                });
+                              }),
                     );
                   }),
             ),

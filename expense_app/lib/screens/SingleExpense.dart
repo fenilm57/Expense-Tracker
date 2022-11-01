@@ -20,6 +20,7 @@ class SingleExpenseScreen extends StatefulWidget {
 }
 
 class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
+  bool isLoading = false;
   Future<dynamic> showDeleteDialog(BuildContext context, Function function) {
     return showDialog(
       context: context,
@@ -60,6 +61,27 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      isLoading = true;
+    });
+    Provider.of<ExpenseList>(context, listen: false)
+        .fetchandSetData(widget.categoryId)
+        .onError((error, stackTrace) => null)
+        .then((value) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  Future<void> refreshPage(BuildContext context) async {
+    await Provider.of<ExpenseList>(context, listen: false)
+        .fetchandSetData(widget.categoryId);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final categories =
         Provider.of<CatagoriesList>(context, listen: false).categories;
@@ -82,76 +104,89 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
         },
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        itemCount: expenses.length,
-        itemBuilder: (context, index) {
-          return Container(
-            padding: const EdgeInsets.all(8.0),
-            height: 100,
-            child: ListTile(
-              tileColor: Colors.lightBlue,
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: ((context) => BigImage(index: index)),
-                      ),
-                    );
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: FileImage(expenses[index].image),
-                    radius: 40,
-                  ),
-                ),
-              ),
-              title: Text(
-                expenses[index].name,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              subtitle: Text(
-                expenses[index].date,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              trailing: Column(
-                children: [
-                  Text(
-                    expenses[index].spent.toString(),
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  GestureDetector(
-                    child: const Icon(Icons.edit),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditExpense(
-                            index: index,
-                            expenses: expenses,
-                            categoryId: widget.categoryId,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : RefreshIndicator(
+              onRefresh: () {
+                return refreshPage(context).then((value) {
+                  setState(() {});
+                });
+              },
+              child: ListView.builder(
+                itemCount: expenses.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.all(8.0),
+                    height: 100,
+                    child: ListTile(
+                      tileColor: Colors.lightBlue,
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) => BigImage(index: index)),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage(expenses[index].image),
+                            radius: 40,
                           ),
                         ),
-                      ).then((value) => setState(() {}));
-                    },
-                  ),
-                  GestureDetector(
-                    child: const Icon(Icons.delete),
-                    onTap: () {
-                      setState(() {
-                        showDeleteDialog(context, () {
-                          provider.removeExpense(index, widget.categoryId);
-                        });
-                      });
-                    },
-                  ),
-                ],
+                      ),
+                      title: Text(
+                        expenses[index].name,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      subtitle: Text(
+                        expenses[index].date,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      trailing: Column(
+                        children: [
+                          Text(
+                            expenses[index].spent.toString(),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          GestureDetector(
+                            child: const Icon(Icons.edit),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditExpense(
+                                    index: index,
+                                    expenses: expenses,
+                                    categoryId: widget.categoryId,
+                                  ),
+                                ),
+                              ).then((value) => setState(() {}));
+                            },
+                          ),
+                          GestureDetector(
+                            child: const Icon(Icons.delete),
+                            onTap: () {
+                              setState(() {
+                                showDeleteDialog(context, () {
+                                  provider.removeExpense(
+                                      index, widget.categoryId);
+                                });
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-          );
-        },
-      ),
     );
   }
 }
@@ -296,7 +331,6 @@ class _AddExpenseState extends State<AddExpense> {
               onPressed: (namecontroller.value.text.isNotEmpty &&
                       spentcontroller.value.text.isNotEmpty)
                   ? () async {
-                      print(image!.path.toString());
                       Provider.of<CatagoriesList>(context, listen: false)
                           .categories;
                       // Add expense
@@ -341,7 +375,7 @@ class BigImage extends StatelessWidget {
         boundaryMargin: EdgeInsets.all(100),
         minScale: 0.5,
         maxScale: 2,
-        child: Image.file(
+        child: Image.network(
           expenses[index].image,
         ),
       ),
