@@ -117,73 +117,82 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
               child: ListView.builder(
                 itemCount: expenses.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    padding: const EdgeInsets.all(8.0),
-                    height: 100,
-                    child: ListTile(
-                      tileColor: Colors.lightBlue,
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: ((context) => BigImage(index: index)),
-                              ),
-                            );
-                          },
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(expenses[index].image),
-                            radius: 40,
-                          ),
-                        ),
-                      ),
-                      title: Text(
-                        expenses[index].name,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      subtitle: Text(
-                        expenses[index].date,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      trailing: Column(
-                        children: [
-                          Text(
-                            expenses[index].spent.toString(),
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          GestureDetector(
-                            child: const Icon(Icons.edit),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditExpense(
-                                    index: index,
-                                    expenses: expenses,
-                                    categoryId: widget.categoryId,
-                                  ),
+                  return expenses.isEmpty
+                      ? const Center(
+                          child: Text('No Expense Yet'),
+                        )
+                      : Container(
+                          padding: const EdgeInsets.all(8.0),
+                          height: 100,
+                          child: ListTile(
+                            tileColor: Colors.lightBlue,
+                            leading: ClipRRect(
+                              borderRadius: BorderRadius.circular(40),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: ((context) =>
+                                          BigImage(index: index)),
+                                    ),
+                                  );
+                                },
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(expenses[index].image),
+                                  radius: 40,
                                 ),
-                              ).then((value) => setState(() {}));
-                            },
+                              ),
+                            ),
+                            title: Text(
+                              expenses[index].name,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            subtitle: Text(
+                              expenses[index].date,
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            trailing: Column(
+                              children: [
+                                Text(
+                                  expenses[index].spent.toString(),
+                                  style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                GestureDetector(
+                                  child: const Icon(Icons.edit),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EditExpense(
+                                          index: index,
+                                          expenses: expenses,
+                                          categoryId: widget.categoryId,
+                                        ),
+                                      ),
+                                    ).then((value) => setState(() {}));
+                                  },
+                                ),
+                                GestureDetector(
+                                  child: const Icon(Icons.delete),
+                                  onTap: () {
+                                    setState(() {
+                                      showDeleteDialog(context, () {
+                                        provider
+                                            .removeExpense(
+                                                index, widget.categoryId)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      });
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          GestureDetector(
-                            child: const Icon(Icons.delete),
-                            onTap: () {
-                              setState(() {
-                                showDeleteDialog(context, () {
-                                  provider.removeExpense(
-                                      index, widget.categoryId);
-                                });
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
+                        );
                 },
               ),
             ),
