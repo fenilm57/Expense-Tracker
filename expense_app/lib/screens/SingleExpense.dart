@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:expense_app/provider/expense_list.dart';
 import 'package:expense_app/widget/select_image_button.dart';
 import 'package:flutter/material.dart';
@@ -211,7 +212,7 @@ class AddExpense extends StatefulWidget {
 class _AddExpenseState extends State<AddExpense> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController spentcontroller = TextEditingController();
-
+  bool isLoading = false;
   String date = 'Select Date';
 
   Future<void> selectDate(BuildContext context) async {
@@ -281,88 +282,114 @@ class _AddExpenseState extends State<AddExpense> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ExpenseList>(context, listen: false);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 35),
-              child: Text(
-                "Add Expense",
-                style: Theme.of(context).textTheme.titleLarge,
+      body: isLoading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Loading...",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: namecontroller,
-                hintText: 'Expense Name',
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: spentcontroller,
-                hintText: 'Money Spent',
-                textInputType: TextInputType.number,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            // Image will be here
-
-            GestureDetector(
-              onTap: () {
-                print(image?.path.length);
-                showModalSheetForImagePicking(context);
-                print(image?.path.length);
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: image?.path.length == null
-                    ? const CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.green,
-                      )
-                    : CircleAvatar(
-                        radius: 40,
-                        backgroundImage: FileImage(image!),
-                      ),
-              ),
-            ),
-            CustomElevatedButton(
-              text: 'Add Expense',
-              onPressed: (namecontroller.value.text.isNotEmpty &&
-                      spentcontroller.value.text.isNotEmpty)
-                  ? () async {
-                      Provider.of<CatagoriesList>(context, listen: false)
-                          .categories;
-                      // Add expense
-                      await provider
-                          .addExpense(
-                              cateroryId: widget.categoryId,
-                              name: namecontroller.text,
-                              date: date,
-                              spent: double.parse(spentcontroller.text),
-                              image: image!)
-                          .then((value) {
-                        setState(() {});
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 35),
+                    child: Text(
+                      "Add Expense",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomTextField(
+                      controller: namecontroller,
+                      hintText: 'Expense Name',
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomTextField(
+                      controller: spentcontroller,
+                      hintText: 'Money Spent',
+                      textInputType: TextInputType.number,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        selectDate(context);
                       });
+                    },
+                    child: Text(date),
+                  ),
+                  // Image will be here
 
-                      namecontroller.clear();
-                      spentcontroller.clear();
-                      Navigator.pop(context);
-                    }
-                  : null,
+                  GestureDetector(
+                    onTap: () {
+                      print(image?.path.length);
+                      showModalSheetForImagePicking(context);
+                      print(image?.path.length);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: image?.path.length == null
+                          ? const CircleAvatar(
+                              radius: 40,
+                              backgroundColor: Colors.green,
+                            )
+                          : CircleAvatar(
+                              radius: 40,
+                              backgroundImage: FileImage(image!),
+                            ),
+                    ),
+                  ),
+                  CustomElevatedButton(
+                    text: 'Add Expense',
+                    onPressed: (namecontroller.value.text.isNotEmpty &&
+                            spentcontroller.value.text.isNotEmpty)
+                        ? () async {
+                            Provider.of<CatagoriesList>(context, listen: false)
+                                .categories;
+
+                            image ??= File("assets/images/google_logo.png");
+                            // Add expense
+                            setState(() {
+                              isLoading = true;
+                            });
+                            await provider
+                                .addExpense(
+                                    cateroryId: widget.categoryId,
+                                    name: namecontroller.text,
+                                    date: date,
+                                    spent: double.parse(spentcontroller.text),
+                                    image: image!)
+                                .then((value) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+
+                            namecontroller.clear();
+                            spentcontroller.clear();
+                            Navigator.pop(context);
+                          }
+                        : null,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -410,7 +437,7 @@ class EditExpense extends StatefulWidget {
 class _EditExpenseState extends State<EditExpense> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController spentcontroller = TextEditingController();
-
+  bool isLoading = false;
   String date = 'Select Date';
 
   Future<void> selectDate(BuildContext context) async {
@@ -480,7 +507,7 @@ class _EditExpenseState extends State<EditExpense> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    image = widget.expenses[widget.index].image;
+    //image = widget.expenses[widget.index].image;
     namecontroller.text = widget.expenses[widget.index].name;
     spentcontroller.text = widget.expenses[widget.index].spent.toString();
     date = widget.expenses[widget.index].date;
@@ -491,87 +518,118 @@ class _EditExpenseState extends State<EditExpense> {
     final provider = Provider.of<ExpenseList>(context, listen: false);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 35),
-              child: Text(
-                "Update Expense",
-                style: Theme.of(context).textTheme.titleLarge,
+      body: isLoading
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Loading...",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: namecontroller,
-                hintText: 'Expense Name',
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: spentcontroller,
-                hintText: 'Money Spent',
-                textInputType: TextInputType.number,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            // Image will be here
-
-            GestureDetector(
-              onTap: () {
-                print(image?.path.length);
-                showModalSheetForImagePicking(context);
-                print(image?.path.length);
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: image?.path.length == null
-                    ? const CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.green,
-                      )
-                    : CircleAvatar(
-                        radius: 40,
-                        backgroundImage: FileImage(image!),
-                      ),
-              ),
-            ),
-            CustomElevatedButton(
-              text: 'Update Category',
-              onPressed: (namecontroller.value.text.isNotEmpty &&
-                      spentcontroller.value.text.isNotEmpty)
-                  ? () {
-                      print(image!.path.toString());
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 35),
+                    child: Text(
+                      "Update Expense",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomTextField(
+                      controller: namecontroller,
+                      hintText: 'Expense Name',
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomTextField(
+                      controller: spentcontroller,
+                      hintText: 'Money Spent',
+                      textInputType: TextInputType.number,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
                       setState(() {
-                        // Add expense
-                        provider.updateExpense(
-                          categoryId: widget.categoryId,
-                          index: widget.index,
-                          id: 'id',
-                          name: namecontroller.text,
-                          date: date,
-                          spent: double.parse(spentcontroller.text),
-                          image: image!,
-                        );
+                        selectDate(context);
                       });
-                      namecontroller.clear();
-                      spentcontroller.clear();
-                      Navigator.pop(context);
-                    }
-                  : null,
+                    },
+                    child: Text(date),
+                  ),
+                  // Image will be here
+
+                  GestureDetector(
+                    onTap: () {
+                      print(image?.path.length);
+                      showModalSheetForImagePicking(context);
+                      print(image?.path.length);
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: image?.path.length == null
+                          ? CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(
+                                widget.expenses[widget.index].image,
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(
+                                widget.expenses[widget.index].image,
+                              ),
+                            ),
+                    ),
+                  ),
+                  CustomElevatedButton(
+                    text: 'Update Category',
+                    onPressed: (namecontroller.value.text.isNotEmpty &&
+                            spentcontroller.value.text.isNotEmpty)
+                        ? () async {
+                            print(image!.path.toString());
+                            setState(() {
+                              isLoading = true;
+                            });
+                            // Add expense
+                            await provider
+                                .updateExpense(
+                              categoryId: widget.categoryId,
+                              index: widget.index,
+                              id: 'id',
+                              name: namecontroller.text,
+                              date: date,
+                              spent: double.parse(spentcontroller.text),
+                              image: image!,
+                            )
+                                .then((value) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            });
+
+                            namecontroller.clear();
+                            spentcontroller.clear();
+                            Navigator.pop(context);
+                          }
+                        : null,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

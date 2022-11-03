@@ -38,7 +38,7 @@ class _CustomGridViewState extends State<CustomGridView> {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
-          print(categories[widget.index].id);
+          //print(categories[widget.index].id);
           Navigator.push(
             context,
             MaterialPageRoute(
