@@ -122,77 +122,107 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                       ? const Center(
                           child: Text('No Expense Yet'),
                         )
-                      : Container(
-                          padding: const EdgeInsets.all(8.0),
-                          height: 100,
-                          child: ListTile(
-                            tileColor: Colors.lightBlue,
-                            leading: ClipRRect(
-                              borderRadius: BorderRadius.circular(40),
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: ((context) =>
-                                          BigImage(index: index)),
-                                    ),
-                                  );
-                                },
-                                child: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(expenses[index].image),
-                                  radius: 40,
-                                ),
-                              ),
-                            ),
-                            title: Text(
-                              expenses[index].name,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            subtitle: Text(
-                              expenses[index].date,
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            trailing: Column(
-                              children: [
-                                Text(
-                                  expenses[index].spent.toString(),
-                                  style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                GestureDetector(
-                                  child: const Icon(Icons.edit),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditExpense(
-                                          index: index,
-                                          expenses: expenses,
-                                          categoryId: widget.categoryId,
-                                        ),
+                      : Padding(
+                          padding: const EdgeInsets.only(
+                              top: 8.0, left: 8, right: 8),
+                          child: Container(
+                              padding: const EdgeInsets.only(left: 8, right: 8),
+                              color: Colors.blueAccent,
+                              height: 100,
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: ((context) =>
+                                                BigImage(index: index)),
+                                          ),
+                                        );
+                                      },
+                                      child: CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(expenses[index].image),
+                                        radius: 30,
                                       ),
-                                    ).then((value) => setState(() {}));
-                                  },
-                                ),
-                                GestureDetector(
-                                  child: const Icon(Icons.delete),
-                                  onTap: () {
-                                    setState(() {
-                                      showDeleteDialog(context, () {
-                                        provider
-                                            .removeExpense(
-                                                index, widget.categoryId)
-                                            .then((value) {
-                                          setState(() {});
-                                        });
-                                      });
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        expenses[index].name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Text(
+                                        expenses[index].date,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 50,
+                                  ),
+                                  Text(
+                                    expenses[index].spent.toString(),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        child: const Icon(Icons.edit),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => EditExpense(
+                                                index: index,
+                                                expenses: expenses,
+                                                categoryId: widget.categoryId,
+                                              ),
+                                            ),
+                                          ).then((value) => setState(() {}));
+                                        },
+                                      ),
+                                      GestureDetector(
+                                        child: const Icon(Icons.delete),
+                                        onTap: () {
+                                          setState(() {
+                                            showDeleteDialog(context, () {
+                                              provider
+                                                  .removeExpense(
+                                                      index, widget.categoryId)
+                                                  .then((value) {
+                                                setState(() {});
+                                              });
+                                            });
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )),
                         );
                 },
               ),
@@ -471,8 +501,9 @@ class _EditExpenseState extends State<EditExpense> {
                   child: SelectPhoto(
                     textLabel: 'Camera',
                     icon: Icons.camera,
-                    onTap: () {
-                      pickImage(ImageSource.camera);
+                    onTap: () async {
+                      await pickImage(ImageSource.camera);
+                      Navigator.pop(context);
                     },
                   ),
                 ),
@@ -482,8 +513,9 @@ class _EditExpenseState extends State<EditExpense> {
                 SelectPhoto(
                   textLabel: 'Gallery',
                   icon: Icons.image,
-                  onTap: () {
-                    pickImage(ImageSource.gallery);
+                  onTap: () async {
+                    await pickImage(ImageSource.gallery);
+                    Navigator.pop(context);
                   },
                 ),
               ],
@@ -497,7 +529,9 @@ class _EditExpenseState extends State<EditExpense> {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
       File? imageTemp = File(image.path);
-      setState(() => this.image = imageTemp);
+      setState(() {
+        this.image = imageTemp;
+      });
     } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
@@ -573,9 +607,12 @@ class _EditExpenseState extends State<EditExpense> {
                   // Image will be here
 
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       print(image?.path.length);
-                      showModalSheetForImagePicking(context);
+                      await showModalSheetForImagePicking(context)
+                          .then((value) {
+                        setState(() {});
+                      });
                       print(image?.path.length);
                     },
                     child: ClipRRect(
@@ -589,8 +626,8 @@ class _EditExpenseState extends State<EditExpense> {
                             )
                           : CircleAvatar(
                               radius: 40,
-                              backgroundImage: NetworkImage(
-                                widget.expenses[widget.index].image,
+                              backgroundImage: FileImage(
+                                image!,
                               ),
                             ),
                     ),
@@ -600,16 +637,17 @@ class _EditExpenseState extends State<EditExpense> {
                     onPressed: (namecontroller.value.text.isNotEmpty &&
                             spentcontroller.value.text.isNotEmpty)
                         ? () async {
-                            print(image!.path.toString());
+                            image ??= File("assets/images/google_logo.png");
+
                             setState(() {
                               isLoading = true;
                             });
-                            // Add expense
+                            // Edit expense
                             await provider
                                 .updateExpense(
                               categoryId: widget.categoryId,
                               index: widget.index,
-                              id: 'id',
+                              id: provider.expenses[widget.index].id,
                               name: namecontroller.text,
                               date: date,
                               spent: double.parse(spentcontroller.text),

@@ -88,8 +88,19 @@ class ExpenseList extends ChangeNotifier {
     required int index,
   }) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
-        '/categories/$categoryId/expenses.json');
-    var imageUrl = await uploadImage(image, id);
+        '/categories/$categoryId/expenses/$id.json');
+
+    var imageUrl = expenses[index].image;
+
+    if ((imageUrl).isEmpty) {
+      if (image.path == "assets/images/google_logo.png") {
+        imageUrl =
+            'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg';
+      } else {
+        imageUrl = await uploadImage(image, id);
+      }
+    }
+
     await http.patch(
       url,
       body: json.encode(
