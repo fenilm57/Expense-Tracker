@@ -73,6 +73,7 @@ class ExpenseList extends ChangeNotifier {
   Future<void> removeExpense(int index, String categoryId) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$categoryId/expenses.json');
+    await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
     await http.delete(url);
     _expenses.removeAt(index);
     notifyListeners();
