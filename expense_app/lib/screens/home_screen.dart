@@ -48,6 +48,15 @@ class _HomeScreenState extends State<HomeScreen> {
     await Provider.of<CatagoriesList>(context, listen: false).fetchandSetData();
   }
 
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      print(_selectedIndex);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -64,6 +73,24 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(fontSize: 20),
         ),
         centerTitle: true,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.lock),
+            label: 'IMP Notes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pie_chart),
+            label: 'Charts',
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(
