@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:ui';
 
 import 'package:expense_app/provider/categories_list.dart';
+import 'package:expense_app/screens/ChartScreen_two.dart';
 import 'package:expense_app/widget/CustomElevatedButton.dart';
 import 'package:expense_app/widget/CustomTextField.dart';
 import 'package:expense_app/widget/custom_gridview.dart';
@@ -50,11 +51,37 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index, BuildContext context, dynamic categories) {
     setState(() {
       _selectedIndex = index;
       print(_selectedIndex);
     });
+
+    if (_selectedIndex == 0) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => HomeScreen(),
+        ),
+      );
+    } else if (_selectedIndex == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => HomeScreen(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => ChartApp(
+            index: index,
+            categories: categories,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -76,7 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) => _onItemTapped(
+          index,
+          context,
+          categoriesProvider,
+        ),
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
