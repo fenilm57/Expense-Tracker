@@ -22,6 +22,7 @@ class SingleExpenseScreen extends StatefulWidget {
 
 class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
   bool isLoading = false;
+  double total = 0;
   Future<dynamic> showDeleteDialog(BuildContext context, Function function) {
     return showDialog(
       context: context,
@@ -88,18 +89,32 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
         Provider.of<CatagoriesList>(context, listen: false).categories;
     final expenses = Provider.of<ExpenseList>(context, listen: false).expenses;
     final provider = Provider.of<ExpenseList>(context, listen: false);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(categories[widget.index].name.toUpperCase()),
         centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(
+                (provider.calc).toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddExpense(categoryId: widget.categoryId),
+              builder: (context) => AddExpense(
+                  categoryId: widget.categoryId, index: widget.index),
             ),
           ).then((value) => setState(() {}));
         },
@@ -160,9 +175,11 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                     children: [
                                       Text(
                                         expenses[index].name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                       const SizedBox(
                                         height: 15,
@@ -233,7 +250,8 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
 
 class AddExpense extends StatefulWidget {
   final String categoryId;
-  const AddExpense({super.key, required this.categoryId});
+  final int index;
+  const AddExpense({super.key, required this.categoryId, required this.index});
 
   @override
   State<AddExpense> createState() => _AddExpenseState();
@@ -390,8 +408,9 @@ class _AddExpenseState extends State<AddExpense> {
                     onPressed: (namecontroller.value.text.isNotEmpty &&
                             spentcontroller.value.text.isNotEmpty)
                         ? () async {
-                            Provider.of<CatagoriesList>(context, listen: false)
-                                .categories;
+                            final categoriesProvider =
+                                Provider.of<CatagoriesList>(context,
+                                    listen: false);
 
                             image ??= File("assets/images/google_logo.png");
                             // Add expense
@@ -405,7 +424,17 @@ class _AddExpenseState extends State<AddExpense> {
                                     date: date,
                                     spent: double.parse(spentcontroller.text),
                                     image: image!)
-                                .then((value) {
+                                .then((value) async {
+                              await provider.sum(
+                                id: widget.categoryId,
+                                budget: categoriesProvider
+                                    .categories[widget.index].budget,
+                                imp: categoriesProvider
+                                    .categories[widget.index].impCategory,
+                                index: widget.index,
+                                name: categoriesProvider
+                                    .categories[widget.index].name,
+                              );
                               setState(() {
                                 isLoading = false;
                               });
@@ -643,6 +672,9 @@ class _EditExpenseState extends State<EditExpense> {
                               isLoading = true;
                             });
                             // Edit expense
+                            final categoriesProvider =
+                                Provider.of<CatagoriesList>(context,
+                                    listen: false);
                             await provider
                                 .updateExpense(
                               categoryId: widget.categoryId,
@@ -653,7 +685,17 @@ class _EditExpenseState extends State<EditExpense> {
                               spent: double.parse(spentcontroller.text),
                               image: image!,
                             )
-                                .then((value) {
+                                .then((value) async {
+                              await provider.sum(
+                                id: widget.categoryId,
+                                budget: categoriesProvider
+                                    .categories[widget.index].budget,
+                                imp: categoriesProvider
+                                    .categories[widget.index].impCategory,
+                                index: widget.index,
+                                name: categoriesProvider
+                                    .categories[widget.index].name,
+                              );
                               setState(() {
                                 isLoading = false;
                               });

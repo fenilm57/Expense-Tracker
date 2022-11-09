@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:expense_app/provider/categories_list.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
@@ -10,6 +11,34 @@ import 'package:expense_app/models/expense.dart';
 class ExpenseList extends ChangeNotifier {
   List<Expense> _expenses = [];
   List<Expense> get expenses => _expenses;
+  double calc = 0;
+  double sum({
+    required String id,
+    required int index,
+    required String name,
+    required double budget,
+    required bool imp,
+  }) {
+    double total = 0;
+    for (var element in _expenses) {
+      total += element.spent;
+    }
+    calc = total;
+    CatagoriesList catagoriesList = CatagoriesList();
+    // print(index);
+
+    catagoriesList.updateCategories(
+      spent: total,
+      id: id,
+      index: index,
+      name: name,
+      budget: budget,
+      imp: imp,
+    );
+
+    notifyListeners();
+    return total;
+  }
 
   Future<void> addExpense({
     required String cateroryId,
@@ -119,6 +148,8 @@ class ExpenseList extends ChangeNotifier {
   }
 
   Future<void> fetchandSetData(String categoryId) async {
+    calc = 0;
+
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$categoryId.json');
     final response = await http.get(url);
@@ -143,6 +174,9 @@ class ExpenseList extends ChangeNotifier {
         );
       });
       _expenses = loadedExpenses;
+      _expenses.forEach((element) {
+        calc += element.spent;
+      });
       notifyListeners();
     }
   }

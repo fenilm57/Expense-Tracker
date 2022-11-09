@@ -95,7 +95,7 @@ class _CustomGridViewState extends State<CustomGridView> {
                     ),
                   ),
                   Text(
-                    categories[widget.index].budget.toString(),
+                    " ${categories[widget.index].spent} / ${categories[widget.index].budget}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 28,
@@ -226,6 +226,7 @@ class _CustomGridViewState extends State<CustomGridView> {
                         budget: budget,
                         imp: impNote,
                         index: widget.index,
+                        spent: provider.categories[widget.index].spent,
                       )
                           .then((value) {
                         setState(() {});

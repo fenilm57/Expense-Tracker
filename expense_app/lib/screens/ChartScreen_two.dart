@@ -63,7 +63,7 @@ class _MyHomePageState extends State<_MyHomePage> {
     final List<ExpenseData> chartData = [];
 
     widget.categories.categories.forEach((element) {
-      chartData.add(ExpenseData(name: element.name, budget: element.budget));
+      chartData.add(ExpenseData(name: element.name, budget: element.spent));
     });
 
     return chartData;

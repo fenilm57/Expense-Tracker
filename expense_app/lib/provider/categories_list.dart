@@ -23,6 +23,7 @@ class CatagoriesList extends ChangeNotifier {
           name: categoryValue['categoryName'],
           budget: categoryValue['budget'],
           impCategory: categoryValue['impCategory'],
+          spent: categoryValue['spent'],
         ),
       );
     });
@@ -39,12 +40,17 @@ class CatagoriesList extends ChangeNotifier {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories.json');
     return http
-        .post(url,
-            body: json.encode({
-              'categoryName': name,
-              'budget': budget,
-              'impCategory': imp,
-            }))
+        .post(
+      url,
+      body: json.encode(
+        {
+          'categoryName': name,
+          'budget': budget,
+          'impCategory': imp,
+          'spent': 0,
+        },
+      ),
+    )
         .then((value) {
       print("json.decode(value.body)['name']");
       _categories.add(
@@ -53,13 +59,14 @@ class CatagoriesList extends ChangeNotifier {
           name: name,
           budget: budget,
           impCategory: imp,
+          spent: 0,
         ),
       );
       notifyListeners();
     });
   }
 
-  void removeCategory(int index) async {
+  Future<void> removeCategory(int index) async {
     var id = _categories[index].id;
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$id.json');
@@ -74,6 +81,7 @@ class CatagoriesList extends ChangeNotifier {
     double budget = 0.0,
     bool imp = false,
     required int index,
+    required double spent,
   }) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$id.json');
@@ -85,11 +93,17 @@ class CatagoriesList extends ChangeNotifier {
           'categoryName': name,
           'budget': budget,
           'impCategory': imp,
+          'spent': spent,
         },
       ),
     );
-    _categories[index] =
-        Category(id: id, name: name, budget: budget, impCategory: imp);
+    _categories[index] = Category(
+      id: id,
+      name: name,
+      budget: budget,
+      impCategory: imp,
+      spent: spent,
+    );
 
     notifyListeners();
   }

@@ -149,9 +149,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           : CustomGridView(
                               index: index,
-                              deleteCategory: () {
-                                setState(() {
-                                  categoriesProvider.removeCategory(index);
+                              deleteCategory: () async {
+                                await categoriesProvider
+                                    .removeCategory(index)
+                                    .then((value) {
+                                  setState(() {});
                                 });
                               }),
                     );
