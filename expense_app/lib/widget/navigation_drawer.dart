@@ -1,3 +1,4 @@
+import 'package:expense_app/screens/SavingScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,12 @@ class NavigationDrawerWidget extends StatelessWidget {
             text: 'Savings',
             icon: Icons.savings,
             voidCallback: () {
-              provider.logout();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => SavingScreen(),
+                ),
+              );
             },
           ),
           SingleNavItem(

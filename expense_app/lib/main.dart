@@ -3,6 +3,7 @@ import 'package:expense_app/auth/google_signin.dart';
 import 'package:expense_app/provider/auth.dart';
 import 'package:expense_app/provider/categories_list.dart';
 import 'package:expense_app/provider/expense_list.dart';
+import 'package:expense_app/provider/savings_list.dart';
 import 'package:expense_app/screens/LoginScreen.dart';
 import 'package:expense_app/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,6 +36,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => Auth(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => SavingList(),
+        )
       ],
       child: MaterialApp(
         theme: ThemeData().copyWith(
