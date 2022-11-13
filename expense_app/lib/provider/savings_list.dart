@@ -13,27 +13,30 @@ class SavingList extends ChangeNotifier {
         '/savings/$title.json');
 
     final response = await http.get(url);
-    final extractedData = json.decode(response.body) as Map<String, dynamic>;
-    final List<Saving> loadedSavings = [];
+    try {
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
 
-    print('Name: ${extractedData}');
+      final List<Saving> loadedSavings = [];
 
-    extractedData.forEach((id, expenseValue) {
-      //print("Name : ${extractedData[id]['amount']}");
-      loadedSavings.add(
-        Saving(
-          id: id,
-          amount: expenseValue['amount'],
-          date: expenseValue['date'],
-        ),
-      );
-    });
-    _savings = loadedSavings;
-    for (var saving in _savings) {
-      print("saving: ${saving.amount}");
+      print('Name: ${extractedData}');
+
+      extractedData.forEach((id, expenseValue) {
+        //print("Name : ${extractedData[id]['amount']}");
+        loadedSavings.add(
+          Saving(
+            id: id,
+            amount: expenseValue['amount'],
+            date: expenseValue['date'],
+          ),
+        );
+      });
+      _savings = loadedSavings;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      _savings = [];
+      notifyListeners();
     }
-    print(_savings.length);
-    notifyListeners();
   }
 
   Future<void> addSaving({
