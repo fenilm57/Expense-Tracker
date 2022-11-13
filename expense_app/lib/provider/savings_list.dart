@@ -8,12 +8,41 @@ class SavingList extends ChangeNotifier {
   List<Saving> _savings = [];
   List<Saving> get savings => _savings;
 
+  Future<void> fetchandSetData(String title) async {
+    var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
+        '/savings/$title.json');
+
+    final response = await http.get(url);
+    final extractedData = json.decode(response.body) as Map<String, dynamic>;
+    final List<Saving> loadedSavings = [];
+
+    print('Name: ${extractedData}');
+
+    extractedData.forEach((id, expenseValue) {
+      //print("Name : ${extractedData[id]['amount']}");
+      loadedSavings.add(
+        Saving(
+          id: id,
+          amount: expenseValue['amount'],
+          date: expenseValue['date'],
+        ),
+      );
+    });
+    _savings = loadedSavings;
+    for (var saving in _savings) {
+      print("saving: ${saving.amount}");
+    }
+    print(_savings.length);
+    notifyListeners();
+  }
+
   Future<void> addSaving({
     required double amount,
     required String date,
+    required String title,
   }) async {
-    var url = Uri.https(
-        'expense-tracker-9be0b-default-rtdb.firebaseio.com', '/savings.json');
+    var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
+        '/savings/$title.json');
     return http
         .post(
       url,
@@ -25,14 +54,7 @@ class SavingList extends ChangeNotifier {
       ),
     )
         .then((value) {
-      print("json.decode(value.body)['name']");
-      _savings.add(
-        Saving(
-          id: json.decode(value.body)['name'],
-          amount: amount,
-          date: date,
-        ),
-      );
+      fetchandSetData(title);
       notifyListeners();
     });
   }

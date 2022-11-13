@@ -1,3 +1,4 @@
+import 'package:expense_app/models/saving.dart';
 import 'package:expense_app/provider/savings_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,13 +7,30 @@ import '../widget/CustomElevatedButton.dart';
 import '../widget/CustomTextField.dart';
 
 class SavingScreen extends StatefulWidget {
-  const SavingScreen({super.key});
+  SavingScreen({super.key, required this.title});
+  final String title;
 
   @override
   State<SavingScreen> createState() => _SavingScreenState();
 }
 
 class _SavingScreenState extends State<SavingScreen> {
+  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<SavingList>(context, listen: false)
+        .fetchandSetData(widget.title)
+        .then((value) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
   int _selectedIndex = 0;
 
   void _onItemTapped(
@@ -25,12 +43,18 @@ class _SavingScreenState extends State<SavingScreen> {
     });
   }
 
+  Future<void> refreshPage(BuildContext context) async {
+    await Provider.of<SavingList>(context, listen: false)
+        .fetchandSetData(widget.title);
+  }
+
   @override
   Widget build(BuildContext context) {
     final savings = Provider.of<SavingList>(context, listen: false).savings;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Savings"),
+        title: Text(widget.title),
         centerTitle: true,
         actions: [
           IconButton(
@@ -77,22 +101,28 @@ class _SavingScreenState extends State<SavingScreen> {
                 ],
               ),
             )
-          : ListView.builder(
-              itemCount: savings.length,
-              itemBuilder: ((context, index) => Container(
-                    child: Center(
-                      child: Text(
-                        "Am: ${savings[index].amount.toString()}",
-                        style: TextStyle(color: Colors.black),
+          : RefreshIndicator(
+              onRefresh: () {
+                return refreshPage(context).then((value) {
+                  setState(() {});
+                });
+              },
+              child: ListView.builder(
+                itemCount: savings.length,
+                itemBuilder: ((context, index) => Container(
+                      child: Center(
+                        child: Text(
+                          "Am: ${savings[index].amount.toString()}",
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                    ),
-                  )),
+                    )),
+              ),
             ),
     );
   }
 
   // Adding Savings
-  bool _isLoading = false;
   TextEditingController savingAmount = TextEditingController();
   String date = 'Select Date';
 
@@ -153,14 +183,15 @@ class _SavingScreenState extends State<SavingScreen> {
                       });
                       Provider.of<SavingList>(context, listen: false)
                           .addSaving(
-                              amount: double.parse(savingAmount.text),
-                              date: date)
+                        amount: double.parse(savingAmount.text),
+                        date: date,
+                        title: widget.title,
+                      )
                           .then((value) {
                         setState(() {
                           _isLoading = false;
                         });
                       });
-
                       savingAmount.clear();
                     }
                   : null,

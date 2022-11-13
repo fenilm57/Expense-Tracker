@@ -1,4 +1,5 @@
 import 'package:expense_app/screens/SavingScreen.dart';
+import 'package:expense_app/screens/SavingsCategory.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,7 @@ class NavigationDrawerWidget extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (ctx) => SavingScreen(),
+                  builder: (ctx) => SavingsCategory(),
                 ),
               );
             },
