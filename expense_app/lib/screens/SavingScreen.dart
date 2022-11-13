@@ -51,10 +51,11 @@ class _SavingScreenState extends State<SavingScreen> {
   @override
   Widget build(BuildContext context) {
     final savings = Provider.of<SavingList>(context, listen: false).savings;
+    final savingProvider = Provider.of<SavingList>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text("${widget.title} (${savingProvider.addingSum()})"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -109,16 +110,108 @@ class _SavingScreenState extends State<SavingScreen> {
               },
               child: ListView.builder(
                 itemCount: savings.length,
-                itemBuilder: ((context, index) => Container(
-                      child: Center(
-                        child: Text(
-                          "Am: ${savings[index].amount.toString()}",
-                          style: TextStyle(color: Colors.black),
+                itemBuilder: ((context, index) => Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        color: Colors.amber,
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            child: Text(
+                              (index + 1).toString(),
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            "${savings[index].amount}",
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            savings[index].date,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          trailing: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  bottomSheetEditCategories(
+                                    context,
+                                    savings[index].amount.toString(),
+                                    savings[index].date,
+                                    index,
+                                  );
+                                },
+                                child: const Icon(Icons.edit),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  //
+                                  showDeleteDialog(
+                                    context,
+                                    index,
+                                    widget.title,
+                                    savings[index].id,
+                                  );
+                                },
+                                child: const Icon(Icons.delete),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     )),
               ),
             ),
+    );
+  }
+
+  Future<dynamic> showDeleteDialog(
+      BuildContext context, int index, String title, String id) {
+    return showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Are you sure?"),
+        content: const Text(
+          "You want to delete this?",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              child: const Text("No"),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await Provider.of<SavingList>(context, listen: false)
+                  .removeSaving(index, id, title)
+                  .then((value) {
+                setState(() {});
+              });
+              Navigator.of(ctx).pop();
+            },
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              child: const Text("Yes"),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -142,7 +235,9 @@ class _SavingScreenState extends State<SavingScreen> {
     }
   }
 
-  Future<dynamic> bottomSheetCategories(BuildContext context) {
+  Future<dynamic> bottomSheetEditCategories(
+      BuildContext context, String text, String date, int index) {
+    savingAmount.text = text;
     return showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
@@ -154,7 +249,72 @@ class _SavingScreenState extends State<SavingScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Add Category",
+                "Edit Expense",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomTextField(
+                controller: savingAmount,
+                hintText: 'Saving Amount',
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  selectDate(context);
+                });
+              },
+              child: Text(date),
+            ),
+            CustomElevatedButton(
+              text: 'Save Saving',
+              onPressed: savingAmount.value.text.isNotEmpty
+                  ? () {
+                      Navigator.pop(context);
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      Provider.of<SavingList>(context, listen: false)
+                          .updateSavings(
+                              amount: double.parse(savingAmount.text),
+                              date: date,
+                              title: widget.title,
+                              id: Provider.of<SavingList>(context,
+                                      listen: false)
+                                  .savings[index]
+                                  .id)
+                          .then((value) {
+                        setState(() {
+                          _isLoading = false;
+                        });
+                      });
+                      savingAmount.clear();
+                    }
+                  : null,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<dynamic> bottomSheetCategories(
+    BuildContext context,
+  ) {
+    return showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      builder: (context) {
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Add Expense",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),

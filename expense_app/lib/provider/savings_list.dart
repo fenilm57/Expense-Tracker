@@ -8,6 +8,15 @@ class SavingList extends ChangeNotifier {
   List<Saving> _savings = [];
   List<Saving> get savings => _savings;
 
+  double addingSum() {
+    double sum = 0;
+    savings.forEach((element) {
+      sum += element.amount;
+    });
+    notifyListeners();
+    return sum;
+  }
+
   Future<void> fetchandSetData(String title) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/savings/$title.json');
@@ -56,9 +65,44 @@ class SavingList extends ChangeNotifier {
         },
       ),
     )
-        .then((value) {
-      fetchandSetData(title);
+        .then((value) async {
+      await fetchandSetData(title);
       notifyListeners();
     });
+  }
+
+  Future<void> updateSavings({
+    required String title,
+    required String id,
+    required double amount,
+    required String date,
+  }) async {
+    var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
+        '/savings/$title/$id.json');
+
+    await http
+        .patch(
+      url,
+      body: json.encode(
+        {
+          'amount': amount,
+          'date': date,
+        },
+      ),
+    )
+        .then((value) async {
+      await fetchandSetData(title);
+    });
+
+    notifyListeners();
+  }
+
+  Future<void> removeSaving(int index, String id, String title) async {
+    var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
+        '/savings/$title/$id.json');
+    await http.delete(url).then((value) async {
+      await fetchandSetData(title);
+    });
+    notifyListeners();
   }
 }
