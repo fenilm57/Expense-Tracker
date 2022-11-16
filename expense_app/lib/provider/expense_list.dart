@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:expense_app/provider/categories_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:uuid/uuid.dart';
@@ -11,6 +12,8 @@ import 'package:expense_app/models/expense.dart';
 class ExpenseList extends ChangeNotifier {
   List<Expense> _expenses = [];
   List<Expense> get expenses => _expenses;
+  final userId = FirebaseAuth.instance.currentUser?.uid;
+
   double calc = 0;
   double sum({
     required String id,

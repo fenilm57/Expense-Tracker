@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:expense_app/models/saving.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,8 +19,15 @@ class SavingList extends ChangeNotifier {
   }
 
   Future<void> fetchandSetData(String title) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
-        '/savings/$title.json');
+        '/savings/$title.json', {
+      "orderBy": "\"creatorId\"",
+      "equalTo": "\"$userId\"",
+    });
+
+    print(userId);
 
     final response = await http.get(url);
     try {
@@ -53,6 +61,7 @@ class SavingList extends ChangeNotifier {
     required String date,
     required String title,
   }) async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/savings/$title.json');
     return http
@@ -62,6 +71,7 @@ class SavingList extends ChangeNotifier {
         {
           'amount': amount,
           'date': date,
+          'creatorId': userId,
         },
       ),
     )

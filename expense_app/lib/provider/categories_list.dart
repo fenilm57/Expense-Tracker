@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:expense_app/models/category.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,10 +10,17 @@ class CatagoriesList extends ChangeNotifier {
   List<Category> get categories => _categories;
 
   Future<void> fetchandSetData() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
-        '/categories.json');
+        '/categories.json', {
+      "orderBy": "\"creatorId\"",
+      "equalTo": "\"$userId\"",
+    });
 
     final response = await http.get(url);
+    print("object");
+    print('Deocde: $userId');
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<Category> loadedCategories = [];
 
@@ -39,6 +47,8 @@ class CatagoriesList extends ChangeNotifier {
     // Firebase Categories being created
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories.json');
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     return http
         .post(
       url,
@@ -48,6 +58,7 @@ class CatagoriesList extends ChangeNotifier {
           'budget': budget,
           'impCategory': imp,
           'spent': 0,
+          'creatorId': userId,
         },
       ),
     )
