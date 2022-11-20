@@ -1,20 +1,20 @@
-import 'package:expense_app/models/saving.dart';
-import 'package:expense_app/provider/savings_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../provider/investment_list.dart';
 import '../widget/CustomElevatedButton.dart';
 import '../widget/CustomTextField.dart';
 
-class SavingScreen extends StatefulWidget {
-  const SavingScreen({super.key, required this.title});
+class InvestmentScreen extends StatefulWidget {
   final String title;
 
+  const InvestmentScreen({super.key, required this.title});
+
   @override
-  State<SavingScreen> createState() => _SavingScreenState();
+  State<InvestmentScreen> createState() => _InvestmentScreenState();
 }
 
-class _SavingScreenState extends State<SavingScreen> {
+class _InvestmentScreenState extends State<InvestmentScreen> {
   bool _isLoading = false;
   @override
   void initState() {
@@ -22,7 +22,7 @@ class _SavingScreenState extends State<SavingScreen> {
     setState(() {
       _isLoading = true;
     });
-    Provider.of<SavingList>(context, listen: false)
+    Provider.of<InvestmentList>(context, listen: false)
         .fetchandSetData(widget.title)
         .then((value) {
       setState(() {
@@ -44,18 +44,20 @@ class _SavingScreenState extends State<SavingScreen> {
   }
 
   Future<void> refreshPage(BuildContext context) async {
-    await Provider.of<SavingList>(context, listen: false)
+    await Provider.of<InvestmentList>(context, listen: false)
         .fetchandSetData(widget.title);
   }
 
   @override
   Widget build(BuildContext context) {
-    final savings = Provider.of<SavingList>(context, listen: false).savings;
-    final savingProvider = Provider.of<SavingList>(context, listen: false);
+    final investments =
+        Provider.of<InvestmentList>(context, listen: false).investments;
+    final investmentProvider =
+        Provider.of<InvestmentList>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.title} (${savingProvider.addingSum()})"),
+        title: Text("${widget.title} (${investmentProvider.addingSum()})"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -75,7 +77,7 @@ class _SavingScreenState extends State<SavingScreen> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.money),
-            label: 'Add Expense',
+            label: 'Add Investment',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_view_day_outlined),
@@ -109,7 +111,7 @@ class _SavingScreenState extends State<SavingScreen> {
                 });
               },
               child: ListView.builder(
-                itemCount: savings.length,
+                itemCount: investments.length,
                 itemBuilder: ((context, index) => Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -125,14 +127,14 @@ class _SavingScreenState extends State<SavingScreen> {
                             ),
                           ),
                           title: Text(
-                            "${savings[index].amount}",
+                            "${investments[index].amount}",
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Text(
-                            savings[index].date,
+                            investments[index].date,
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -144,8 +146,8 @@ class _SavingScreenState extends State<SavingScreen> {
                                 onTap: () {
                                   bottomSheetEditCategories(
                                     context,
-                                    savings[index].amount.toString(),
-                                    savings[index].date,
+                                    investments[index].amount.toString(),
+                                    investments[index].date,
                                     index,
                                   );
                                 },
@@ -158,7 +160,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                     context,
                                     index,
                                     widget.title,
-                                    savings[index].id,
+                                    investments[index].id,
                                   );
                                 },
                                 child: const Icon(Icons.delete),
@@ -198,8 +200,8 @@ class _SavingScreenState extends State<SavingScreen> {
           ),
           TextButton(
             onPressed: () async {
-              await Provider.of<SavingList>(context, listen: false)
-                  .removeSaving(index, id, title)
+              await Provider.of<InvestmentList>(context, listen: false)
+                  .removeInvestment(index, id, title)
                   .then((value) {
                 setState(() {});
               });
@@ -249,7 +251,7 @@ class _SavingScreenState extends State<SavingScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Edit Expense",
+                "Edit Investment",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -257,7 +259,7 @@ class _SavingScreenState extends State<SavingScreen> {
               padding: const EdgeInsets.all(8.0),
               child: CustomTextField(
                 controller: savingAmount,
-                hintText: 'Saving Amount',
+                hintText: 'Investment Amount',
               ),
             ),
             TextButton(
@@ -269,21 +271,21 @@ class _SavingScreenState extends State<SavingScreen> {
               child: Text(date),
             ),
             CustomElevatedButton(
-              text: 'Save Saving',
+              text: 'Save Investment',
               onPressed: savingAmount.value.text.isNotEmpty
                   ? () {
                       Navigator.pop(context);
                       setState(() {
                         _isLoading = true;
                       });
-                      Provider.of<SavingList>(context, listen: false)
-                          .updateSavings(
+                      Provider.of<InvestmentList>(context, listen: false)
+                          .updateInvestment(
                               amount: double.parse(savingAmount.text),
                               date: date,
                               title: widget.title,
-                              id: Provider.of<SavingList>(context,
+                              id: Provider.of<InvestmentList>(context,
                                       listen: false)
-                                  .savings[index]
+                                  .investments[index]
                                   .id)
                           .then((value) {
                         setState(() {
@@ -314,7 +316,7 @@ class _SavingScreenState extends State<SavingScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Add Expense",
+                "Add Investment",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -322,7 +324,7 @@ class _SavingScreenState extends State<SavingScreen> {
               padding: const EdgeInsets.all(8.0),
               child: CustomTextField(
                 controller: savingAmount,
-                hintText: 'Saving Amount',
+                hintText: 'Investment Amount',
               ),
             ),
             TextButton(
@@ -334,15 +336,15 @@ class _SavingScreenState extends State<SavingScreen> {
               child: Text(date),
             ),
             CustomElevatedButton(
-              text: 'Add Saving',
+              text: 'Add Investment',
               onPressed: savingAmount.value.text.isNotEmpty
                   ? () {
                       Navigator.pop(context);
                       setState(() {
                         _isLoading = true;
                       });
-                      Provider.of<SavingList>(context, listen: false)
-                          .addSaving(
+                      Provider.of<InvestmentList>(context, listen: false)
+                          .addInvestment(
                         amount: double.parse(savingAmount.text),
                         date: date,
                         title: widget.title,

@@ -24,6 +24,7 @@ class _CustomGridViewState extends State<CustomGridView> {
   TextEditingController namecontroller = TextEditingController();
   TextEditingController budgetcontroller = TextEditingController();
   bool impNote = false;
+
   void insertDataIntoController() {
     print(namecontroller.text);
   }
@@ -32,6 +33,8 @@ class _CustomGridViewState extends State<CustomGridView> {
   Widget build(BuildContext context) {
     final categories =
         Provider.of<CatagoriesList>(context, listen: false).categories;
+    final impCategories =
+        Provider.of<CatagoriesList>(context, listen: false).impCategories;
     final categoriesProvider =
         Provider.of<CatagoriesList>(context, listen: false);
     return Padding(
@@ -95,7 +98,7 @@ class _CustomGridViewState extends State<CustomGridView> {
                     ),
                   ),
                   Text(
-                    " ${categories[widget.index].spent} / ${categories[widget.index].budget}",
+                    " ${(categories[widget.index].spent).toStringAsFixed(2)} / ${categories[widget.index].budget}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 28,

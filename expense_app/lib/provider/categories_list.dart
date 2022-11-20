@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 class CatagoriesList extends ChangeNotifier {
   List<Category> _categories = [];
+  List<Category> impCategories = [];
   List<Category> get categories => _categories;
 
   Future<void> fetchandSetData() async {
@@ -23,19 +24,40 @@ class CatagoriesList extends ChangeNotifier {
     print('Deocde: $userId');
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<Category> loadedCategories = [];
-
+    final List<Category> impC = [];
+    double spent = 0;
     extractedData.forEach((id, categoryValue) {
-      loadedCategories.add(
-        Category(
-          id: id,
-          name: categoryValue['categoryName'],
-          budget: categoryValue['budget'],
-          impCategory: categoryValue['impCategory'],
-          spent: categoryValue['spent'],
-        ),
-      );
+      if (categoryValue['spent'] != 0) {
+        spent = categoryValue['spent'];
+        print("object");
+      }
+
+      if (categoryValue['impCategory'] == false) {
+        loadedCategories.add(
+          Category(
+            id: id,
+            name: categoryValue['categoryName'],
+            budget: categoryValue['budget'],
+            impCategory: categoryValue['impCategory'],
+            spent: spent,
+          ),
+        );
+      } else {
+        impC.add(
+          Category(
+            id: id,
+            name: categoryValue['categoryName'],
+            budget: categoryValue['budget'],
+            impCategory: categoryValue['impCategory'],
+            spent: spent,
+          ),
+        );
+      }
     });
+
     _categories = loadedCategories;
+    impCategories = impC;
+    print(impCategories);
     notifyListeners();
   }
 

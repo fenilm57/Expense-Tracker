@@ -98,7 +98,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Center(
               child: Text(
-                (provider.calc).toString(),
+                (provider.calc).toStringAsFixed(2),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

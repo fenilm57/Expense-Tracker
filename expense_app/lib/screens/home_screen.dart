@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:ui';
-
 import 'package:expense_app/provider/categories_list.dart';
 import 'package:expense_app/screens/ChartScreen_two.dart';
 import 'package:expense_app/widget/CustomElevatedButton.dart';
@@ -58,20 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     if (_selectedIndex == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => HomeScreen(),
-        ),
-      );
-    } else if (_selectedIndex == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => HomeScreen(),
-        ),
-      );
-    } else {
+      //
+    } else if (_selectedIndex == 2) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -81,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       );
-    }
+    } else {}
   }
 
   @override
@@ -133,31 +118,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {});
                 });
               },
-              child: GridView.builder(
-                  itemCount: categoriesProvider.categories.length,
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 250,
-                    mainAxisExtent: 180,
-                  ),
-                  itemBuilder: (context, index) {
-                    return SizedBox(
-                      width: 10,
-                      height: 10,
-                      child: categoriesProvider.categories.isEmpty
-                          ? const Center(
-                              child: Text('No Expense Yet'),
-                            )
-                          : CustomGridView(
-                              index: index,
-                              deleteCategory: () async {
-                                await categoriesProvider
-                                    .removeCategory(index)
-                                    .then((value) {
-                                  setState(() {});
-                                });
-                              }),
-                    );
-                  }),
+              child: _selectedIndex == 0
+                  ? GridView.builder(
+                      itemCount: categoriesProvider.categories.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 250,
+                        mainAxisExtent: 180,
+                      ),
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          width: 10,
+                          height: 10,
+                          child: categoriesProvider.categories.isEmpty
+                              ? const Center(
+                                  child: Text('No Expense Yet'),
+                                )
+                              : CustomGridView(
+                                  index: index,
+                                  deleteCategory: () async {
+                                    await categoriesProvider
+                                        .removeCategory(index)
+                                        .then(
+                                      (value) {
+                                        setState(() {});
+                                      },
+                                    );
+                                  },
+                                ),
+                        );
+                      })
+                  // Below will be code of IMP category
+                  : Container(),
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

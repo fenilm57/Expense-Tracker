@@ -1,8 +1,10 @@
 import 'dart:ui';
 import 'package:expense_app/auth/google_signin.dart';
+import 'package:expense_app/models/invesment.dart';
 import 'package:expense_app/provider/auth.dart';
 import 'package:expense_app/provider/categories_list.dart';
 import 'package:expense_app/provider/expense_list.dart';
+import 'package:expense_app/provider/investment_list.dart';
 import 'package:expense_app/provider/savings_list.dart';
 import 'package:expense_app/screens/LoginScreen.dart';
 import 'package:expense_app/screens/home_screen.dart';
@@ -38,6 +40,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => SavingList(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => InvestmentList(),
         )
       ],
       child: MaterialApp(

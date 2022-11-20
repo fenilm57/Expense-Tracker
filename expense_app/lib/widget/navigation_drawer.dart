@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../auth/google_signin.dart';
+import '../screens/InvesmentCategory.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   const NavigationDrawerWidget({super.key});
@@ -28,7 +29,14 @@ class NavigationDrawerWidget extends StatelessWidget {
           SingleNavItem(
             text: 'Investment',
             icon: Icons.money,
-            voidCallback: () {},
+            voidCallback: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => InvestmentCategory(),
+                ),
+              );
+            },
           ),
           SingleNavItem(
             text: 'Savings',
