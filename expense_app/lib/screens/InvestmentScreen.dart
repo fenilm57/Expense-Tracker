@@ -6,9 +6,9 @@ import '../widget/CustomElevatedButton.dart';
 import '../widget/CustomTextField.dart';
 
 class InvestmentScreen extends StatefulWidget {
-  final String title;
+  final investment;
 
-  const InvestmentScreen({super.key, required this.title});
+  const InvestmentScreen({super.key, required this.investment});
 
   @override
   State<InvestmentScreen> createState() => _InvestmentScreenState();
@@ -23,7 +23,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
       _isLoading = true;
     });
     Provider.of<InvestmentList>(context, listen: false)
-        .fetchandSetData(widget.title)
+        .fetchandSetData(widget.investment.title)
         .then((value) {
       setState(() {
         _isLoading = false;
@@ -45,7 +45,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
 
   Future<void> refreshPage(BuildContext context) async {
     await Provider.of<InvestmentList>(context, listen: false)
-        .fetchandSetData(widget.title);
+        .fetchandSetData(widget.investment.title);
   }
 
   @override
@@ -57,7 +57,8 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.title} (${investmentProvider.addingSum()})"),
+        title: Text(
+            "${widget.investment.title} (${investmentProvider.addingSum()})"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -113,63 +114,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
               child: ListView.builder(
                 itemCount: investments.length,
                 itemBuilder: ((context, index) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        color: Colors.amber,
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            child: Text(
-                              (index + 1).toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            "${investments[index].amount}",
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            investments[index].date,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  bottomSheetEditCategories(
-                                    context,
-                                    investments[index].amount.toString(),
-                                    investments[index].date,
-                                    index,
-                                  );
-                                },
-                                child: const Icon(Icons.edit),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  //
-                                  showDeleteDialog(
-                                    context,
-                                    index,
-                                    widget.title,
-                                    investments[index].id,
-                                  );
-                                },
-                                child: const Icon(Icons.delete),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )),
+                    padding: const EdgeInsets.all(8.0), child: Column())),
               ),
             ),
     );
@@ -282,7 +227,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                           .updateInvestment(
                               amount: double.parse(savingAmount.text),
                               date: date,
-                              title: widget.title,
+                              title: widget.investment.title,
                               id: Provider.of<InvestmentList>(context,
                                       listen: false)
                                   .investments[index]
@@ -347,7 +292,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                           .addInvestment(
                         amount: double.parse(savingAmount.text),
                         date: date,
-                        title: widget.title,
+                        title: widget.investment.title,
                       )
                           .then((value) {
                         setState(() {

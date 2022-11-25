@@ -46,7 +46,11 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
+        // global appbar with #4B57A3 color
         theme: ThemeData().copyWith(
+          appBarTheme: const AppBarTheme(
+            color: Color(0xff4B57A3), //<-- SEE HERE
+          ),
           textTheme: const TextTheme(
             titleLarge: TextStyle(
               fontSize: 30,

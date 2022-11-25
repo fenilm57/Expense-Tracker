@@ -7,27 +7,27 @@ class InvestmentCategory extends StatelessWidget {
 
   List<InvesmentCategoryList> investments = [
     InvesmentCategoryList(
-      image: 'assets/images/fixeddeposit.png',
+      image: 'assets/images/fd.jpeg',
       title: 'FD',
     ),
     InvesmentCategoryList(
-      image: 'assets/images/gold_investment.png',
+      image: 'assets/images/golds.jpeg',
       title: 'Gold',
     ),
     InvesmentCategoryList(
-      image: 'assets/images/house_investment.png',
+      image: 'assets/images/housing.jpeg',
       title: 'Housing',
     ),
     InvesmentCategoryList(
-      image: 'assets/images/mutual_investment.png',
+      image: 'assets/images/bonds.jpeg',
       title: 'Bonds',
     ),
     InvesmentCategoryList(
-      image: 'assets/images/stock_investment.png',
+      image: 'assets/images/stocks.jpeg',
       title: 'Stocks',
     ),
     InvesmentCategoryList(
-      image: 'assets/images/other.png',
+      image: 'assets/images/others.jpeg',
       title: 'Others',
     ),
   ];
@@ -38,70 +38,63 @@ class InvestmentCategory extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Investments'),
       ),
-      body: GridView.builder(
-        itemCount: investments.length,
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 220,
-          mainAxisExtent: 150,
-        ),
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: Offset(0.0, 1.0), //(x,y)
-                  blurRadius: 6.0,
+      body: Padding(
+        padding: const EdgeInsets.only(right: 10.0),
+        child: GridView.builder(
+          itemCount: investments.length,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 220,
+            mainAxisExtent: 180,
+          ),
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.only(left: 10, top: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => InvestmentScreen(
+                        investment: investments[index],
+                      ),
+                    ),
+                  );
+                },
+                child: Column(
+                  children: [
+                    Container(
+                      height: 130,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            investments[index].image,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        // color to rgba(84,83,79,255)
+                        color: Color(0xff54534F),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          investments[index].title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => InvestmentScreen(
-                      title: investments[index].title,
-                    ),
-                  ),
-                );
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    width: 180,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage(
-                          investments[index].image,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.black26,
-                    ),
-                    child: Center(
-                      child: Text(
-                        investments[index].title,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
