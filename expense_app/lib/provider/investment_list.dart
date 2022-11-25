@@ -108,8 +108,11 @@ class InvestmentList extends ChangeNotifier {
   }
 
   Future<void> removeInvestment(int index, String id, String title) async {
+    print("In Delete 1");
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/investment/$title/$id.json');
+    print("In Delete 2");
+
     await http.delete(url).then((value) async {
       await fetchandSetData(title);
     });
