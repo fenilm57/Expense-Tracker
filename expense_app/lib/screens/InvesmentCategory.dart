@@ -44,7 +44,7 @@ class InvestmentCategory extends StatelessWidget {
           itemCount: investments.length,
           gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 220,
-            mainAxisExtent: 180,
+            mainAxisExtent: 210,
           ),
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.only(left: 10, top: 10),
@@ -63,35 +63,44 @@ class InvestmentCategory extends StatelessWidget {
                 },
                 child: Column(
                   children: [
-                    Container(
-                      height: 130,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage(
-                            investments[index].image,
+                    Stack(
+                      children: [
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                investments[index].image,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                        // color to rgba(84,83,79,255)
-                        color: Color(0xff54534F),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          investments[index].title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
+                        Positioned(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 160),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                // color to rgba(84,83,79,255)
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  investments[index].title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),

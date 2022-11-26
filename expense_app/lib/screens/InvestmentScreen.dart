@@ -15,6 +15,7 @@ class InvestmentScreen extends StatefulWidget {
 }
 
 class _InvestmentScreenState extends State<InvestmentScreen> {
+  Color purpleColor = const Color(0xff4B57A3);
   bool _isLoading = false;
   @override
   void initState() {
@@ -28,18 +29,6 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
       setState(() {
         _isLoading = false;
       });
-    });
-  }
-
-  int _selectedIndex = 0;
-
-  void _onItemTapped(
-    int index,
-    BuildContext context,
-  ) {
-    setState(() {
-      _selectedIndex = index;
-      print(_selectedIndex);
     });
   }
 
@@ -60,32 +49,18 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
         title: Text(
             "${widget.investment.title} (${investmentProvider.addingSum()})"),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              bottomSheetCategories(context);
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => _onItemTapped(
-          index,
-          context,
-        ),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: 'Add Investment',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_view_day_outlined),
-            label: 'Calender',
-          ),
-        ],
+      // FAB
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          bottomSheetCategories(context);
+          savingAmount.clear();
+          date = 'Select Date';
+        },
+        backgroundColor: Color(0xff4B57A3),
+        child: const Icon(Icons.add),
       ),
+
       body: _isLoading
           ? Center(
               child: Column(
@@ -160,16 +135,18 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           // edit investment
-                                          bottomSheetEditCategories(
+                                          await bottomSheetEditCategories(
                                             context,
                                             investments[index]
                                                 .amount
                                                 .toString(),
                                             investments[index].date,
                                             index,
-                                          );
+                                          ).then((value) {
+                                            setState(() {});
+                                          });
                                         },
                                         color: Colors.green,
                                         icon: const Icon(
@@ -186,6 +163,8 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                                             widget.investment.title,
                                             investments[index].id,
                                           );
+                                          savingAmount.clear();
+                                          date = 'Select Date';
                                         },
                                         color: Colors.red,
                                         icon: const Icon(
@@ -300,15 +279,15 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-        date = selectedDate.toString().replaceAll("00:00:00.000", "");
-      });
+      selectedDate = picked;
+      date = selectedDate.toString().replaceAll("00:00:00.000", "");
     }
   }
 
   Future<dynamic> bottomSheetEditCategories(
-      BuildContext context, String text, String date, int index) {
+      BuildContext context, String text, String date2, int index) {
+    savingAmount.text = text;
+    String date1 = date2;
     savingAmount.text = text;
     return showModalBottomSheet(
       context: context,
@@ -316,57 +295,68 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
         borderRadius: BorderRadius.circular(30),
       ),
       builder: (context) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Edit Investment",
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(
+          builder: (context, setState) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Edit Investment",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: savingAmount,
-                hintText: 'Investment Amount',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomTextField(
+                  controller: savingAmount,
+                  hintText: 'Investment Amount',
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            CustomElevatedButton(
-              text: 'Save Investment',
-              onPressed: savingAmount.value.text.isNotEmpty
-                  ? () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      Provider.of<InvestmentList>(context, listen: false)
-                          .updateInvestment(
-                              amount: double.parse(savingAmount.text),
-                              date: date,
-                              title: widget.investment.title,
-                              id: Provider.of<InvestmentList>(context,
-                                      listen: false)
-                                  .investments[index]
-                                  .id)
-                          .then((value) {
+              TextButton(
+                onPressed: () async {
+                  await selectDate(context).then((value) {
+                    setState(() {
+                      date1 = date;
+                    });
+                  });
+                  print("object:$date");
+                },
+                child: Text(
+                  date1,
+                  style: const TextStyle(
+                    color: Color(0xff4B57A3),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CustomElevatedButton(
+                text: 'Save Investment',
+                onPressed: savingAmount.value.text.isNotEmpty
+                    ? () {
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = true;
                         });
-                      });
-                      savingAmount.clear();
-                    }
-                  : null,
-            ),
-          ],
+                        Provider.of<InvestmentList>(context, listen: false)
+                            .updateInvestment(
+                                amount: double.parse(savingAmount.text),
+                                date: date,
+                                title: widget.investment.title,
+                                id: Provider.of<InvestmentList>(context,
+                                        listen: false)
+                                    .investments[index]
+                                    .id)
+                            .then((value) {
+                          setState(() {
+                            _isLoading = false;
+                            Navigator.pop(context);
+                          });
+                        });
+                        savingAmount.clear();
+                      }
+                    : null,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -381,55 +371,67 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
         borderRadius: BorderRadius.circular(30),
       ),
       builder: (context) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Add Investment",
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(builder: (context, setState) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Add Investment",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: purpleColor,
+                      ),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: savingAmount,
-                hintText: 'Investment Amount',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomTextField(
+                  controller: savingAmount,
+                  hintText: 'Investment Amount',
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            CustomElevatedButton(
-              text: 'Add Investment',
-              onPressed: savingAmount.value.text.isNotEmpty
-                  ? () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      Provider.of<InvestmentList>(context, listen: false)
-                          .addInvestment(
-                        amount: double.parse(savingAmount.text),
-                        date: date,
-                        title: widget.investment.title,
-                      )
-                          .then((value) {
+              TextButton(
+                onPressed: () async {
+                  await selectDate(context);
+                  setState(() {
+                    print(date);
+                  });
+                },
+                child: Text(
+                  date,
+                  style: const TextStyle(
+                    color: Color(0xff4B57A3),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CustomElevatedButton(
+                text: 'Add Investment',
+                onPressed: savingAmount.value.text.isNotEmpty
+                    ? () {
+                        Navigator.pop(context);
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = true;
                         });
-                      });
-                      savingAmount.clear();
-                    }
-                  : null,
-            ),
-          ],
-        );
+                        Provider.of<InvestmentList>(context, listen: false)
+                            .addInvestment(
+                          amount: double.parse(savingAmount.text),
+                          date: date,
+                          title: widget.investment.title,
+                        )
+                            .then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        });
+                        savingAmount.clear();
+                        date = 'Select Date';
+                      }
+                    : null,
+              ),
+            ],
+          );
+        });
       },
     );
   }

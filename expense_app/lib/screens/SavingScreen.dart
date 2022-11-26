@@ -7,8 +7,8 @@ import '../widget/CustomElevatedButton.dart';
 import '../widget/CustomTextField.dart';
 
 class SavingScreen extends StatefulWidget {
-  const SavingScreen({super.key, required this.title});
-  final String title;
+  const SavingScreen({super.key, required this.saving});
+  final saving;
 
   @override
   State<SavingScreen> createState() => _SavingScreenState();
@@ -23,7 +23,7 @@ class _SavingScreenState extends State<SavingScreen> {
       _isLoading = true;
     });
     Provider.of<SavingList>(context, listen: false)
-        .fetchandSetData(widget.title)
+        .fetchandSetData(widget.saving.title)
         .then((value) {
       setState(() {
         _isLoading = false;
@@ -45,7 +45,7 @@ class _SavingScreenState extends State<SavingScreen> {
 
   Future<void> refreshPage(BuildContext context) async {
     await Provider.of<SavingList>(context, listen: false)
-        .fetchandSetData(widget.title);
+        .fetchandSetData(widget.saving.title);
   }
 
   @override
@@ -55,33 +55,16 @@ class _SavingScreenState extends State<SavingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.title} (${savingProvider.addingSum()})"),
+        title: Text("${widget.saving.title} (${savingProvider.addingSum()})"),
         centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              bottomSheetCategories(context);
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => _onItemTapped(
-          index,
-          context,
-        ),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: 'Add Expense',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_view_day_outlined),
-            label: 'Calender',
-          ),
-        ],
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await bottomSheetCategories(context);
+          date = 'Select Date';
+        },
+        backgroundColor: Color(0xff4B57A3),
+        child: const Icon(Icons.add),
       ),
       body: _isLoading
           ? Center(
@@ -108,66 +91,100 @@ class _SavingScreenState extends State<SavingScreen> {
                   setState(() {});
                 });
               },
-              child: ListView.builder(
-                itemCount: savings.length,
-                itemBuilder: ((context, index) => Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        color: Colors.amber,
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            child: Text(
-                              (index + 1).toString(),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            "${savings[index].amount}",
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                            savings[index].date,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          trailing: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  bottomSheetEditCategories(
-                                    context,
+              child: Column(
+                children: [
+                  stackImageWithTitle(context),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: savings.length,
+                      itemBuilder: ((context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // list for displaying the investments along with edit and delete icon
+                                ListTile(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  tileColor: const Color(0xffa7a6a2),
+                                  leading: CircleAvatar(
+                                    radius: 25,
+                                    backgroundColor: Color(0xff4B57A3),
+                                    child: FittedBox(
+                                      child: Text(
+                                        '${index + 1}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
                                     savings[index].amount.toString(),
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff4B57A3),
+                                    ),
+                                  ),
+                                  subtitle: Text(
                                     savings[index].date,
-                                    index,
-                                  );
-                                },
-                                child: const Icon(Icons.edit),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  //
-                                  showDeleteDialog(
-                                    context,
-                                    index,
-                                    widget.title,
-                                    savings[index].id,
-                                  );
-                                },
-                                child: const Icon(Icons.delete),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )),
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      color: Color(0xff4B57A3),
+                                    ),
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          // edit investment
+                                          print(date);
+
+                                          await bottomSheetEditCategories(
+                                            context,
+                                            savings[index].amount.toString(),
+                                            savings[index].date,
+                                            index,
+                                          ).then((value) {
+                                            setState(() {});
+                                          });
+                                          print(date);
+                                        },
+                                        color: Colors.green,
+                                        icon: const Icon(
+                                          Icons.edit,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          print("In Dialog");
+                                          await showDeleteDialog(
+                                            context,
+                                            index,
+                                            widget.saving.title,
+                                            savings[index].id,
+                                          ).then((value) {
+                                            setState(() {});
+                                          });
+                                        },
+                                        color: Colors.red,
+                                        icon: const Icon(
+                                          Icons.delete,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
               ),
             ),
     );
@@ -236,65 +253,78 @@ class _SavingScreenState extends State<SavingScreen> {
   }
 
   Future<dynamic> bottomSheetEditCategories(
-      BuildContext context, String text, String date, int index) {
+      BuildContext context, String text, String date2, int index) {
     savingAmount.text = text;
+    String date1 = date2;
     return showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
       builder: (context) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Edit Expense",
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(
+          builder: (context, setState) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Edit Expense",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: savingAmount,
-                hintText: 'Saving Amount',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomTextField(
+                  controller: savingAmount,
+                  hintText: 'Saving Amount',
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            CustomElevatedButton(
-              text: 'Save Saving',
-              onPressed: savingAmount.value.text.isNotEmpty
-                  ? () {
-                      Navigator.pop(context);
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selectDate(context).then((value) {
                       setState(() {
-                        _isLoading = true;
+                        date1 = date;
                       });
-                      Provider.of<SavingList>(context, listen: false)
-                          .updateSavings(
-                              amount: double.parse(savingAmount.text),
-                              date: date,
-                              title: widget.title,
-                              id: Provider.of<SavingList>(context,
-                                      listen: false)
-                                  .savings[index]
-                                  .id)
-                          .then((value) {
+                    });
+                  });
+                },
+                child: Text(
+                  date1,
+                  style: const TextStyle(
+                    color: Color(0xff4B57A3),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CustomElevatedButton(
+                text: 'Save Saving',
+                onPressed: savingAmount.value.text.isNotEmpty
+                    ? () {
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = true;
                         });
-                      });
-                      savingAmount.clear();
-                    }
-                  : null,
-            ),
-          ],
+                        Provider.of<SavingList>(context, listen: false)
+                            .updateSavings(
+                                amount: double.parse(savingAmount.text),
+                                date: date1,
+                                title: widget.saving.title,
+                                id: Provider.of<SavingList>(context,
+                                        listen: false)
+                                    .savings[index]
+                                    .id)
+                            .then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          Navigator.pop(context);
+                        });
+                        savingAmount.clear();
+                      }
+                    : null,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -309,56 +339,108 @@ class _SavingScreenState extends State<SavingScreen> {
         borderRadius: BorderRadius.circular(30),
       ),
       builder: (context) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                "Add Expense",
-                style: Theme.of(context).textTheme.titleLarge,
+        return StatefulBuilder(
+          builder: (context, setState) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Add Expense",
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: const Color(0xff4B57A3),
+                      ),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomTextField(
-                controller: savingAmount,
-                hintText: 'Saving Amount',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomTextField(
+                  controller: savingAmount,
+                  hintText: 'Saving Amount',
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  selectDate(context);
-                });
-              },
-              child: Text(date),
-            ),
-            CustomElevatedButton(
-              text: 'Add Saving',
-              onPressed: savingAmount.value.text.isNotEmpty
-                  ? () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      Provider.of<SavingList>(context, listen: false)
-                          .addSaving(
-                        amount: double.parse(savingAmount.text),
-                        date: date,
-                        title: widget.title,
-                      )
-                          .then((value) {
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    selectDate(context).then((value) {
+                      setState(() {});
+                    });
+                  });
+                },
+                child: Text(
+                  date,
+                  style: const TextStyle(
+                    color: Color(0xff4B57A3),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              CustomElevatedButton(
+                text: 'Add Saving',
+                onPressed: savingAmount.value.text.isNotEmpty
+                    ? () {
+                        Navigator.pop(context);
                         setState(() {
-                          _isLoading = false;
+                          _isLoading = true;
                         });
-                      });
-                      savingAmount.clear();
-                    }
-                  : null,
-            ),
-          ],
+                        Provider.of<SavingList>(context, listen: false)
+                            .addSaving(
+                          amount: double.parse(savingAmount.text),
+                          date: date,
+                          title: widget.saving.title,
+                        )
+                            .then((value) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        });
+                        savingAmount.clear();
+                        date = 'Select Date';
+                      }
+                    : null,
+              ),
+            ],
+          ),
         );
       },
+    );
+  }
+
+  Stack stackImageWithTitle(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          height: 200,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(
+                widget.saving.image,
+              ),
+            ),
+          ),
+        ),
+        // stack for text
+        Positioned(
+          top: 50,
+          left: 10,
+          child: Container(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                widget.saving.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

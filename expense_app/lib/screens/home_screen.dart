@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_selectedIndex == 0) {
       //
-    } else if (_selectedIndex == 2) {
+    } else if (_selectedIndex == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -97,10 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            label: 'IMP Notes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),

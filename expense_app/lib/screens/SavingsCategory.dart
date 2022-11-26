@@ -8,27 +8,27 @@ class SavingsCategory extends StatelessWidget {
 
   List<SavingCategory> categories = [
     SavingCategory(
-      image: 'assets/images/house.png',
+      image: 'assets/images/house.jpeg',
       title: 'Housing',
     ),
     SavingCategory(
-      image: 'assets/images/car.png',
+      image: 'assets/images/house.jpeg',
       title: 'Vehicle',
     ),
     SavingCategory(
-      image: 'assets/images/travelling.png',
+      image: 'assets/images/house.jpeg',
       title: 'Travelling',
     ),
     SavingCategory(
-      image: 'assets/images/investment.png',
+      image: 'assets/images/house.jpeg',
       title: 'Investment',
     ),
     SavingCategory(
-      image: 'assets/images/emergency.png',
+      image: 'assets/images/house.jpeg',
       title: 'Emergency',
     ),
     SavingCategory(
-      image: 'assets/images/other.png',
+      image: 'assets/images/others.jpeg',
       title: 'Others',
     ),
   ];
@@ -39,67 +39,72 @@ class SavingsCategory extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Savings'),
       ),
-      body: GridView.builder(
-        itemCount: categories.length,
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 220,
-          mainAxisExtent: 150,
-        ),
-        itemBuilder: (context, index) => Padding(
-          padding: const EdgeInsets.only(left: 10, top: 10),
-          child: Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5.0),
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.grey,
-                  offset: Offset(0.0, 1.0), //(x,y)
-                  blurRadius: 6.0,
-                ),
-              ],
-            ),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) => SavingScreen(
-                      title: categories[index].title,
+      body: Padding(
+        padding: const EdgeInsets.only(right: 10.0),
+        child: GridView.builder(
+          itemCount: categories.length,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 220,
+            mainAxisExtent: 210,
+          ),
+          itemBuilder: (context, index) => Padding(
+            padding: const EdgeInsets.only(left: 10, top: 10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => SavingScreen(
+                        saving: categories[index],
+                      ),
                     ),
-                  ),
-                );
-              },
-              child: Column(
-                children: [
-                  Container(
-                    height: 100,
-                    width: 180,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage(
-                          categories[index].image,
+                  );
+                },
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage(
+                                categories[index].image,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 160),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: const BoxDecoration(
+                                // color to rgba(84,83,79,255)
+                                color: Color.fromRGBO(0, 0, 0, 0.3),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  categories[index].title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.black26,
-                    ),
-                    child: Text(
-                      categories[index].title,
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

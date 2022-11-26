@@ -82,23 +82,6 @@ class _MyHomePageState extends State<_MyHomePage> {
           builder: (ctx) => HomeScreen(),
         ),
       );
-    } else if (_selectedIndex == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => HomeScreen(),
-        ),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => ChartApp(
-            index: index,
-            categories: categories,
-          ),
-        ),
-      );
     }
   }
 
@@ -119,10 +102,6 @@ class _MyHomePageState extends State<_MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.lock),
-            label: 'IMP Notes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
