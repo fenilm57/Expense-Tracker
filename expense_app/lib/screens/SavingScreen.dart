@@ -258,8 +258,12 @@ class _SavingScreenState extends State<SavingScreen> {
     String date1 = date2;
     return showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+      shape: const RoundedRectangleBorder(
+        // only topleft and topright
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       builder: (context) {
         return StatefulBuilder(
@@ -335,8 +339,12 @@ class _SavingScreenState extends State<SavingScreen> {
   ) {
     return showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+      shape: const RoundedRectangleBorder(
+        // only topleft and topright
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       builder: (context) {
         return StatefulBuilder(

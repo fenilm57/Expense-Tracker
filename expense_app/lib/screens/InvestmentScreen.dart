@@ -291,8 +291,12 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
     savingAmount.text = text;
     return showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+      shape: const RoundedRectangleBorder(
+        // only topleft and topright
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       builder: (context) {
         return StatefulBuilder(
@@ -367,8 +371,12 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
   ) {
     return showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+      shape: const RoundedRectangleBorder(
+        // only topleft and topright
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
       builder: (context) {
         return StatefulBuilder(builder: (context, setState) {
