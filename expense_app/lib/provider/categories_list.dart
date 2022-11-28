@@ -10,6 +10,15 @@ class CatagoriesList extends ChangeNotifier {
   List<Category> impCategories = [];
   List<Category> get categories => _categories;
 
+  Future<double> spentReturn(int index) async {
+    double spent = 0;
+    await fetchandSetData().then((value) {
+      spent = categories[index].spent;
+    });
+    print("Spent: $spent");
+    return spent;
+  }
+
   Future<void> fetchandSetData() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
@@ -20,11 +29,8 @@ class CatagoriesList extends ChangeNotifier {
     });
 
     final response = await http.get(url);
-    print("object");
-    print('Deocde: $userId');
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<Category> loadedCategories = [];
-    final List<Category> impC = [];
     double spent = 0;
     extractedData.forEach((id, categoryValue) {
       if (categoryValue['spent'] != 0) {
@@ -32,32 +38,18 @@ class CatagoriesList extends ChangeNotifier {
         print("object");
       }
 
-      if (categoryValue['impCategory'] == false) {
-        loadedCategories.add(
-          Category(
-            id: id,
-            name: categoryValue['categoryName'],
-            budget: categoryValue['budget'],
-            impCategory: categoryValue['impCategory'],
-            spent: spent,
-          ),
-        );
-      } else {
-        impC.add(
-          Category(
-            id: id,
-            name: categoryValue['categoryName'],
-            budget: categoryValue['budget'],
-            impCategory: categoryValue['impCategory'],
-            spent: spent,
-          ),
-        );
-      }
+      loadedCategories.add(
+        Category(
+          id: id,
+          name: categoryValue['categoryName'],
+          budget: categoryValue['budget'],
+          impCategory: categoryValue['impCategory'],
+          spent: spent,
+        ),
+      );
     });
 
     _categories = loadedCategories;
-    impCategories = impC;
-    print(impCategories);
     notifyListeners();
   }
 

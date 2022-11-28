@@ -15,13 +15,13 @@ class ExpenseList extends ChangeNotifier {
   final userId = FirebaseAuth.instance.currentUser?.uid;
 
   double calc = 0;
-  double sum({
+  Future<void> sum({
     required String id,
     required int index,
     required String name,
     required double budget,
     required bool imp,
-  }) {
+  }) async {
     double total = 0;
     for (var element in _expenses) {
       total += element.spent;
@@ -40,7 +40,6 @@ class ExpenseList extends ChangeNotifier {
     );
 
     notifyListeners();
-    return total;
   }
 
   Future<void> addExpense({
@@ -102,9 +101,10 @@ class ExpenseList extends ChangeNotifier {
     }
   }
 
-  Future<void> removeExpense(int index, String categoryId) async {
+  Future<void> removeExpense(
+      int index, String categoryId, String expenseId) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
-        '/categories/$categoryId/expenses.json');
+        '/categories/$categoryId/expenses/$expenseId.json');
     await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
     await http.delete(url);
     _expenses.removeAt(index);

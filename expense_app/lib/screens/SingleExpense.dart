@@ -94,17 +94,30 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
         title: Text(categories[widget.index].name.toUpperCase()),
         centerTitle: true,
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Text(
-                (provider.calc).toStringAsFixed(2),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+          PopupMenuButton(
+            icon: const Icon(Icons.more_vert),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: TextButton(
+                  onPressed: () async {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "Total: ${await Provider.of<CatagoriesList>(context, listen: false).spentReturn(widget.index)} spent so far..",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        backgroundColor: Colors.black,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  child: const Text("Total"),
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -130,120 +143,183 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                   setState(() {});
                 });
               },
-              child: ListView.builder(
-                itemCount: expenses.length,
-                itemBuilder: (context, index) {
-                  return expenses.isEmpty
-                      ? const Center(
-                          child: Text('No Expense Yet'),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8.0, left: 8, right: 8),
-                          child: Container(
-                              padding: const EdgeInsets.only(left: 8, right: 8),
-                              color: Colors.blueAccent,
-                              height: 100,
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: ((context) =>
-                                                BigImage(index: index)),
-                                          ),
-                                        );
-                                      },
-                                      child: CircleAvatar(
-                                        backgroundImage:
-                                            NetworkImage(expenses[index].image),
-                                        radius: 30,
-                                      ),
+              child: Column(
+                children: [
+                  stackImageWithTitle(context),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: expenses.length,
+                      itemBuilder: ((context, index) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    //
+                                  },
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        expenses[index].name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Text(
-                                        expenses[index].date,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    width: 50,
-                                  ),
-                                  Text(
-                                    expenses[index].spent.toString(),
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        child: const Icon(Icons.edit),
+                                    tileColor: const Color(0xffa7a6a2),
+                                    leading: ClipRRect(
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: GestureDetector(
                                         onTap: () {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => EditExpense(
-                                                index: index,
-                                                expenses: expenses,
-                                                categoryId: widget.categoryId,
+                                              builder: ((context) =>
+                                                  BigImage(index: index)),
+                                            ),
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              expenses[index].image),
+                                          radius: 30,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      "${expenses[index].name}",
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff4B57A3),
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      "${expenses[index].date}",
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        color: Color(0xff4B57A3),
+                                      ),
+                                    ),
+                                    //  trailing with row of 2 buttons
+
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 25,
+                                          backgroundColor: Colors.green[400],
+                                          child: FittedBox(
+                                            child: Text(
+                                              '${expenses[index].spent}',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
                                               ),
                                             ),
-                                          ).then((value) => setState(() {}));
-                                        },
-                                      ),
-                                      GestureDetector(
-                                        child: const Icon(Icons.delete),
-                                        onTap: () {
-                                          setState(() {
-                                            showDeleteDialog(context, () {
-                                              provider
-                                                  .removeExpense(
-                                                      index, widget.categoryId)
-                                                  .then((value) {
-                                                setState(() {});
-                                              });
-                                            });
-                                          });
-                                        },
-                                      ),
-                                    ],
+                                          ),
+                                        ),
+                                        // popup menu button for edit and delete
+                                        PopupMenuButton(
+                                          icon: const Icon(Icons.more_vert),
+                                          itemBuilder: (context) => [
+                                            PopupMenuItem(
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          EditExpense(
+                                                        index: index,
+                                                        expenses: expenses,
+                                                        categoryId:
+                                                            widget.categoryId,
+                                                      ),
+                                                    ),
+                                                  ).then((value) =>
+                                                      setState(() {
+                                                        Navigator.pop(context);
+                                                      }));
+                                                },
+                                                child: const Text("Edit"),
+                                              ),
+                                            ),
+                                            PopupMenuItem(
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    showDeleteDialog(context,
+                                                        () {
+                                                      print("Delete");
+                                                      provider
+                                                          .removeExpense(
+                                                              index,
+                                                              widget.categoryId,
+                                                              expenses[index]
+                                                                  .id)
+                                                          .then((value) {
+                                                        setState(() {
+                                                          Navigator.pop(
+                                                              context);
+                                                        });
+                                                      });
+                                                    });
+                                                  });
+                                                },
+                                                child: const Text("Delete"),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              )),
-                        );
-                },
+                                ),
+                              ],
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
               ),
             ),
+    );
+  }
+
+  Stack stackImageWithTitle(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          height: 200,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage(
+                'assets/images/travelling.jpeg',
+              ),
+            ),
+          ),
+        ),
+        // stack for text
+        Positioned(
+          top: 50,
+          left: 10,
+          child: Container(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Text(
+                Provider.of<CatagoriesList>(context)
+                    .categories[widget.index]
+                    .name,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -402,6 +478,9 @@ class _AddExpenseState extends State<AddExpense> {
                               backgroundImage: FileImage(image!),
                             ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   CustomElevatedButton(
                     text: 'Add Expense',
@@ -660,6 +739,9 @@ class _EditExpenseState extends State<EditExpense> {
                               ),
                             ),
                     ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                   CustomElevatedButton(
                     text: 'Update Category',
