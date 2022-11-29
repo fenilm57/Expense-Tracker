@@ -28,6 +28,13 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
   var focusNode = FocusNode();
 
   List<Expense> expenses = [];
+
+  @override
+  dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
+
   Future<dynamic> showDeleteDialog(BuildContext context, Function function) {
     return showDialog(
       context: context,
