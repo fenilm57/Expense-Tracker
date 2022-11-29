@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:expense_app/models/category.dart';
+import 'package:expense_app/provider/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class CatagoriesList extends ChangeNotifier {
   List<Category> _categories = [];
@@ -21,13 +23,17 @@ class CatagoriesList extends ChangeNotifier {
 
   Future<void> fetchandSetData() async {
     final userId = FirebaseAuth.instance.currentUser?.uid;
+    // Auth auth = new Auth();
+    // final userIdByLogin = auth.userIdReturn;
 
+    // check if user is from google or email
+
+    print("object22");
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories.json', {
       "orderBy": "\"creatorId\"",
       "equalTo": "\"$userId\"",
     });
-
     final response = await http.get(url);
     final extractedData = json.decode(response.body) as Map<String, dynamic>;
     final List<Category> loadedCategories = [];
@@ -50,6 +56,7 @@ class CatagoriesList extends ChangeNotifier {
     });
 
     _categories = loadedCategories;
+
     notifyListeners();
   }
 
@@ -62,6 +69,7 @@ class CatagoriesList extends ChangeNotifier {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories.json');
     final userId = FirebaseAuth.instance.currentUser?.uid;
+    print("userId: $userId");
 
     return http
         .post(

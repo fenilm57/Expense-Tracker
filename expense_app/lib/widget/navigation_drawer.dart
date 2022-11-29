@@ -1,3 +1,4 @@
+import 'package:expense_app/provider/auth.dart';
 import 'package:expense_app/screens/SavingScreen.dart';
 import 'package:expense_app/screens/SavingsCategory.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,19 +7,32 @@ import 'package:provider/provider.dart';
 
 import '../auth/google_signin.dart';
 import '../screens/InvesmentCategory.dart';
+import '../screens/LoginScreen.dart';
 
-class NavigationDrawerWidget extends StatelessWidget {
-  const NavigationDrawerWidget({super.key});
+class NavigationDrawerWidget extends StatefulWidget {
+  NavigationDrawerWidget({super.key});
+
+  @override
+  State<NavigationDrawerWidget> createState() => _NavigationDrawerWidgetState();
+}
+
+class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
+  var user;
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser!;
+    try {
+      user = FirebaseAuth.instance.currentUser!;
+    } catch (e) {
+      print(e);
+    }
+
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     return Drawer(
       child: Container(
         color: const Color.fromRGBO(50, 75, 205, 1),
         child: Column(children: [
-          HeaderNavBar(user: user),
+          user == null ? Container() : HeaderNavBar(user: user),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Divider(
@@ -54,7 +68,16 @@ class NavigationDrawerWidget extends StatelessWidget {
             text: 'Logout',
             icon: Icons.logout,
             voidCallback: () {
-              provider.logout();
+              setState(() {
+                user == null
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => LoginScreen(),
+                        ),
+                      )
+                    : provider.logout();
+              });
             },
           ),
         ]),

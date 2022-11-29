@@ -7,10 +7,14 @@ import 'dart:convert';
 class Auth with ChangeNotifier {
   late String _token;
   DateTime _expiryDate = DateTime.now();
-  late String _userId;
+  late String userId;
 
   bool get isAuth {
     return token != '';
+  }
+
+  String get userIdReturn {
+    return userId;
   }
 
   String get token {
@@ -24,7 +28,7 @@ class Auth with ChangeNotifier {
 
   void logout() {
     _token = '';
-    _userId = '';
+    userId = '';
   }
 
   Future<void> signup(String email, String password) async {
@@ -48,7 +52,7 @@ class Auth with ChangeNotifier {
         throw HttpException(responseData['error']['message']);
       }
       _token = responseData['idToken'];
-      _userId = responseData['localId'];
+      userId = responseData['localId'];
       _expiryDate = DateTime.now().add(
         Duration(
           seconds: int.parse(responseData['expiresIn']),
@@ -82,7 +86,8 @@ class Auth with ChangeNotifier {
         throw HttpException(responseData['error']['message']);
       }
       _token = responseData['idToken'];
-      _userId = responseData['localId'];
+      userId = responseData['localId'];
+      print("user ID: $userId");
       _expiryDate = DateTime.now().add(
         Duration(
           seconds: int.parse(responseData['expiresIn']),
