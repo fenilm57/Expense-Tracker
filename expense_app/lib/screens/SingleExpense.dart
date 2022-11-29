@@ -25,6 +25,8 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
   bool searchData = false;
   bool isLoading = false;
   double total = 0;
+  var focusNode = FocusNode();
+
   List<Expense> expenses = [];
   Future<dynamic> showDeleteDialog(BuildContext context, Function function) {
     return showDialog(
@@ -96,6 +98,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
       appBar: AppBar(
         title: searchData
             ? TextField(
+                focusNode: focusNode,
                 decoration: const InputDecoration(
                   fillColor: Colors.white,
                   hintText: "Search",
@@ -118,6 +121,7 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
             onPressed: () {
               setState(() {
                 searchData = !searchData;
+                FocusScope.of(context).requestFocus(focusNode);
               });
             },
             icon: const Icon(Icons.search),
