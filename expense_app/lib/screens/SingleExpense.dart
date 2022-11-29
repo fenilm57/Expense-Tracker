@@ -22,6 +22,7 @@ class SingleExpenseScreen extends StatefulWidget {
 }
 
 class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
+  bool searchData = false;
   bool isLoading = false;
   double total = 0;
   List<Expense> expenses = [];
@@ -93,9 +94,34 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
     final provider = Provider.of<ExpenseList>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: Text(categories[widget.index].name.toUpperCase()),
+        title: searchData
+            ? TextField(
+                decoration: const InputDecoration(
+                  fillColor: Colors.white,
+                  hintText: "Search",
+                  hintStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+                onChanged: searchExpense,
+              )
+            : Text(categories[widget.index].name.toUpperCase()),
         centerTitle: true,
         actions: [
+          //search icon
+          IconButton(
+            onPressed: () {
+              setState(() {
+                searchData = !searchData;
+              });
+            },
+            icon: const Icon(Icons.search),
+          ),
           PopupMenuButton(
             icon: const Icon(Icons.more_vert),
             itemBuilder: (context) => [
@@ -159,163 +185,177 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
               child: GestureDetector(
                 onTap: () {
                   FocusScope.of(context).unfocus();
+                  searchData = false;
                 },
-                child: Column(
-                  children: [
-                    stackImageWithTitle(context, expenses),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: expenses.length,
-                        itemBuilder: ((context, index) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      //
-                                    },
-                                    child: ListTile(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      ),
-                                      tileColor: const Color(0xffa7a6a2),
-                                      leading: ClipRRect(
-                                        borderRadius: BorderRadius.circular(30),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: ((context) =>
-                                                    BigImage(index: index)),
-                                              ),
-                                            );
-                                          },
-                                          child: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                expenses[index].image),
-                                            radius: 30,
+                child: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    searchData = false;
+                  },
+                  child: Column(
+                    children: [
+                      stackImageWithTitle(context, expenses),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: expenses.length,
+                          itemBuilder: ((context, index) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        //
+                                      },
+                                      child: ListTile(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                        ),
+                                        tileColor: const Color(0xffa7a6a2),
+                                        leading: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: ((context) =>
+                                                      BigImage(index: index)),
+                                                ),
+                                              );
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  expenses[index].image),
+                                              radius: 30,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        "${expenses[index].name}",
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xff4B57A3),
+                                        title: Text(
+                                          "${expenses[index].name}",
+                                          style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff4B57A3),
+                                          ),
                                         ),
-                                      ),
-                                      subtitle: Text(
-                                        "${expenses[index].date}",
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          color: Color(0xff4B57A3),
+                                        subtitle: Text(
+                                          "${expenses[index].date}",
+                                          style: const TextStyle(
+                                            fontSize: 15,
+                                            color: Color(0xff4B57A3),
+                                          ),
                                         ),
-                                      ),
-                                      //  trailing with row of 2 buttons
+                                        //  trailing with row of 2 buttons
 
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 25,
-                                            backgroundColor: Colors.green[400],
-                                            child: FittedBox(
-                                              child: Text(
-                                                '${expenses[index].spent}',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 20,
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 25,
+                                              backgroundColor:
+                                                  Colors.green[400],
+                                              child: FittedBox(
+                                                child: Text(
+                                                  '${expenses[index].spent}',
+                                                  style: const TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          // popup menu button for edit and delete
-                                          PopupMenuButton(
-                                            icon: const Icon(Icons.more_vert),
-                                            itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditExpense(
-                                                          index: index,
-                                                          expenses: expenses,
-                                                          categoryId:
-                                                              widget.categoryId,
+                                            // popup menu button for edit and delete
+                                            PopupMenuButton(
+                                              icon: const Icon(Icons.more_vert),
+                                              itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EditExpense(
+                                                            index: index,
+                                                            expenses: expenses,
+                                                            categoryId: widget
+                                                                .categoryId,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ).then((value) =>
-                                                        setState(() {
-                                                          Provider.of<ExpenseList>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .fetchandSetData(
+                                                      )
+                                                          .then(
+                                                              (value) =>
+                                                                  setState(() {
+                                                                    Provider.of<ExpenseList>(
+                                                                            context,
+                                                                            listen:
+                                                                                false)
+                                                                        .fetchandSetData(widget
+                                                                            .categoryId)
+                                                                        .onError((error,
+                                                                                stackTrace) =>
+                                                                            null)
+                                                                        .then(
+                                                                            (value) {
+                                                                      setState(
+                                                                          () {
+                                                                        isLoading =
+                                                                            false;
+                                                                      });
+                                                                      expenses = Provider.of<ExpenseList>(
+                                                                              context,
+                                                                              listen: false)
+                                                                          .expenses;
+                                                                    });
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  }));
+                                                    },
+                                                    child: const Text("Edit"),
+                                                  ),
+                                                ),
+                                                PopupMenuItem(
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        showDeleteDialog(
+                                                            context, () {
+                                                          print("Delete");
+                                                          provider
+                                                              .removeExpense(
+                                                                  index,
                                                                   widget
-                                                                      .categoryId)
-                                                              .onError((error,
-                                                                      stackTrace) =>
-                                                                  null)
+                                                                      .categoryId,
+                                                                  expenses[
+                                                                          index]
+                                                                      .id)
                                                               .then((value) {
                                                             setState(() {
-                                                              isLoading = false;
+                                                              Navigator.pop(
+                                                                  context);
                                                             });
-                                                            expenses = Provider
-                                                                    .of<ExpenseList>(
-                                                                        context,
-                                                                        listen:
-                                                                            false)
-                                                                .expenses;
-                                                          });
-                                                          Navigator.pop(
-                                                              context);
-                                                        }));
-                                                  },
-                                                  child: const Text("Edit"),
-                                                ),
-                                              ),
-                                              PopupMenuItem(
-                                                child: TextButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      showDeleteDialog(context,
-                                                          () {
-                                                        print("Delete");
-                                                        provider
-                                                            .removeExpense(
-                                                                index,
-                                                                widget
-                                                                    .categoryId,
-                                                                expenses[index]
-                                                                    .id)
-                                                            .then((value) {
-                                                          setState(() {
-                                                            Navigator.pop(
-                                                                context);
                                                           });
                                                         });
                                                       });
-                                                    });
-                                                  },
-                                                  child: const Text("Delete"),
+                                                    },
+                                                    child: const Text("Delete"),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            )),
+                                  ],
+                                ),
+                              )),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -356,36 +396,6 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          top: 90,
-          left: 10,
-          child: Container(
-            height: 50,
-            width: MediaQuery.of(context).size.width - 200,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10.0),
-              child: TextField(
-                decoration: const InputDecoration(
-                  fillColor: Colors.white,
-                  hintText: "Search",
-                  hintStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                  suffixIcon: Icon(
-                    Icons.search,
-                    color: Colors.white,
-                  ),
-                ),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-                onChanged: searchExpense,
               ),
             ),
           ),
