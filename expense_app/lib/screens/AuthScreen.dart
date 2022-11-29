@@ -4,6 +4,7 @@ import 'package:expense_app/provider/auth.dart';
 import 'package:expense_app/widget/CustomElevatedButton.dart';
 import 'package:expense_app/widget/CustomTextField.dart';
 import 'package:expense_app/widget/login.dart';
+import 'package:expense_app/widget/login_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,112 +26,187 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomTextField(
-              controller: _email,
-              hintText: 'Enter Email',
-            ),
-            CustomTextField(
-              controller: _password,
-              hintText: 'Enter Password',
-            ),
-            !showConfirmPassword
-                ? Padding(
-                    padding: const EdgeInsets.only(left: 230),
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Forgot password?',
-                      ),
-                    ),
-                  )
-                : Container(),
-            showConfirmPassword
-                ? CustomTextField(
-                    controller: _confirmPassword,
-                    hintText: 'Confirm Password',
-                  )
-                : Container(),
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: CustomElevatedButton(
-                text: 'Log In',
-                onPressed: () {
-                  if (showConfirmPassword == false) {
-                    Provider.of<Auth>(context, listen: false)
-                        .signIn(_email.text, _password.text)
-                        .catchError((error) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(
-                            error.toString(),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Okay'),
-                            )
-                          ],
-                        ),
-                      );
-                    });
-                  } else {
-                    if (_password.text == _confirmPassword.text) {
-                      Provider.of<Auth>(context, listen: false)
-                          .signup(_email.text, _password.text)
-                          .catchError((error) {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text(
-                              error.toString(),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Okay'),
-                              )
-                            ],
-                          ),
-                        );
-                      });
-                    }
-                  }
-                },
-              ),
-            ),
-            const Text(
-              'or',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  showConfirmPassword = !showConfirmPassword;
-                });
-              },
-              child: showConfirmPassword
-                  ? const Text('Sign In')
-                  : const Text('Sign Up'),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            const LoginButton(),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/background.jpeg'),
+            fit: BoxFit.cover,
+          ),
         ),
+        // login and signup form
+        child: Center(
+            child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const Text(
+                'Expense Tracker',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(
+                height: 50,
+              ),
+
+              GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Container(
+                  width: 370,
+                  height: 700,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      showConfirmPassword
+                          ? const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff4B57A3),
+                              ),
+                            )
+                          : const Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 30,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff4B57A3),
+                              ),
+                            ),
+                      const SizedBox(
+                        height: 80,
+                      ),
+                      SizedBox(
+                        width: 350,
+                        // new textfield for email dont use custometextfield
+                        child: LoginTextField(
+                          secure: false,
+                          controller: _email,
+                          hintTexts: 'Email',
+                          icon: Icons.email,
+                          textInputType: TextInputType.emailAddress,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 350,
+                        // new textfield for email dont use custometextfield
+                        child: LoginTextField(
+                          secure: true,
+                          controller: _password,
+                          hintTexts: 'Password',
+                          icon: Icons.lock,
+                          textInputType: TextInputType.visiblePassword,
+                        ),
+                      ),
+                      showConfirmPassword
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: SizedBox(
+                                width: 350,
+                                // new textfield for email dont use custometextfield
+                                child: LoginTextField(
+                                  secure: true,
+                                  controller: _confirmPassword,
+                                  hintTexts: 'Confirm Password',
+                                  icon: Icons.lock,
+                                  textInputType: TextInputType.visiblePassword,
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 80,
+                      ),
+                      showConfirmPassword
+                          ? CustomElevatedButton(
+                              text: 'Sign Up',
+                              onPressed: () {
+                                // Provider.of<Auth>(context, listen: false)
+                                //     .login(_email.text, _password.text);
+                              },
+                            )
+                          : CustomElevatedButton(
+                              text: 'Login',
+                              onPressed: () {
+                                // Provider.of<Auth>(context, listen: false)
+                                //     .login(_email.text, _password.text);
+                              },
+                            ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Don\'t have an account?',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                showConfirmPassword = !showConfirmPassword;
+                              });
+                            },
+                            child: showConfirmPassword
+                                ? const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Sign Up',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
+                      const Text(
+                        'or',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const LoginButton(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // signup form
+            ],
+          ),
+        )),
       ),
     );
   }
