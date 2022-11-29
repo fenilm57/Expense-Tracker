@@ -6,7 +6,6 @@ import 'package:expense_app/widget/custom_gridview.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../auth/google_signin.dart';
 import '../widget/navigation_drawer.dart';
 
@@ -169,6 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Container(),
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(
+          0xff4B57A3,
+        ),
         onPressed: () {
           bottomSheetCategories(context, dialogContext);
         },
@@ -192,7 +194,11 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 "Add Category",
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      color: const Color(
+                        0xff4B57A3,
+                      ),
+                    ),
               ),
             ),
             Padding(

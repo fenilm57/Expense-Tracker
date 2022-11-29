@@ -212,8 +212,12 @@ class _CustomGridViewState extends State<CustomGridView> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Add Category",
-                style: Theme.of(context).textTheme.titleLarge,
+                "Edit Category",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Color(
+                        0xff4B57A3,
+                      ),
+                    ),
               ),
             ),
             Padding(
