@@ -127,37 +127,47 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
           IconButton(
             onPressed: () {
               setState(() {
-                searchData = !searchData;
+                searchData = true;
                 FocusScope.of(context).requestFocus(focusNode);
               });
             },
             icon: const Icon(Icons.search),
           ),
-          PopupMenuButton(
-            icon: const Icon(Icons.more_vert),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                child: TextButton(
-                  onPressed: () async {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "Total: ${await Provider.of<CatagoriesList>(context, listen: false).spentReturn(widget.index)} spent so far..",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                        backgroundColor: Colors.black,
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
+          searchData
+              ? IconButton(
+                  onPressed: () {
+                    setState(() {
+                      searchData = false;
+                      FocusScope.of(context).requestFocus(focusNode);
+                    });
                   },
-                  child: const Text("Total"),
+                  icon: const Icon(Icons.cancel),
+                )
+              : PopupMenuButton(
+                  icon: const Icon(Icons.more_vert),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: TextButton(
+                        onPressed: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Total: ${await Provider.of<CatagoriesList>(context, listen: false).spentReturn(widget.index)} spent so far..",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              backgroundColor: Colors.black,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        child: const Text("Total"),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
