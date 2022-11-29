@@ -38,76 +38,121 @@ class _CustomGridViewState extends State<CustomGridView> {
     final categoriesProvider =
         Provider.of<CatagoriesList>(context, listen: false);
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          //print(categories[widget.index].id);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => SingleExpenseScreen(
-                index: widget.index,
-                categoryId: categories[widget.index].id,
-              ),
-            ),
-          );
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: GridTile(
-            footer: GridTileBar(
-              leading: GestureDetector(
-                child: const Icon(Icons.edit, size: 30),
-                onTap: () {
-                  namecontroller.text = categories[widget.index].name;
-                  budgetcontroller.text =
-                      categories[widget.index].budget.toString();
-                  bottomSheetCategories(context);
-                },
-              ),
-              title: const SizedBox(
-                width: 50,
-              ),
-              trailing: GestureDetector(
-                child: const Icon(Icons.delete, size: 30),
-                onTap: () {
-                  showDeleteDialog(context, categoriesProvider);
-                },
-              ),
-            ),
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.purple,
-                    Colors.blue,
-                  ],
+      padding: const EdgeInsets.only(left: 35, top: 20, right: 35),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(25),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => SingleExpenseScreen(
+                  index: widget.index,
+                  categoryId: categories[widget.index].id,
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            );
+          },
+          child: Column(
+            children: [
+              Stack(
                 children: [
-                  Text(
-                    categories[widget.index].name.toUpperCase(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      color: Colors.amber,
+                  Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfsOHXhuTglJ9IGSygRRa8IQCcf7clftNy1Q&usqp=CAU",
+                        ),
+                      ),
                     ),
                   ),
-                  Text(
-                    " ${(categories[widget.index].spent).toStringAsFixed(2)} / ${categories[widget.index].budget}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 28,
-                      color: Colors.amber,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 120),
+                    child: Container(
+                      height: 80,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        // color to rgba(84,83,79,255)
+                        color: Color.fromRGBO(0, 0, 0, 0.3),
+                      ),
+                      child: Row(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  '${categories[widget.index].name}',
+                                  //investments[index].title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: Text(
+                                  '\$${categories[widget.index].budget}',
+                                  //investments[index].title,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          // delete button
+                          Padding(
+                            padding: const EdgeInsets.only(left: 80.0),
+                            child: IconButton(
+                              onPressed: () {
+                                showDeleteDialog(context, categoriesProvider);
+                              },
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20.0),
+                            child: IconButton(
+                              onPressed: () {
+                                namecontroller.text =
+                                    categories[widget.index].name;
+                                budgetcontroller.text =
+                                    categories[widget.index].budget.toString();
+                                bottomSheetCategories(context);
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
       ),

@@ -106,52 +106,68 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: categoriesProvider.categories.length == 0
+      body: isLoading
           ? const Center(
-              child: Text(
-                'No Categories',
-                style: TextStyle(color: Colors.black),
-              ),
+              child: CircularProgressIndicator(),
             )
-          : isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : RefreshIndicator(
-                  onRefresh: () {
-                    return refreshPage(context).then((value) {
-                      setState(() {});
-                    });
-                  },
-                  child: _selectedIndex == 0
-                      ? GridView.builder(
-                          itemCount: categoriesProvider.categories.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 250,
-                            mainAxisExtent: 180,
-                          ),
-                          itemBuilder: (context, index) {
-                            return SizedBox(
-                              width: 10,
-                              height: 10,
-                              child: CustomGridView(
-                                index: index,
-                                deleteCategory: () async {
-                                  await categoriesProvider
-                                      .removeCategory(index)
-                                      .then(
-                                    (value) {
-                                      setState(() {});
-                                    },
-                                  );
-                                },
+          : RefreshIndicator(
+              onRefresh: () {
+                return refreshPage(context).then((value) {
+                  setState(() {});
+                });
+              },
+              child: categoriesProvider.categories.length == 0
+                  ? const Center(
+                      child: Text(
+                        'No Categories',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    )
+                  : _selectedIndex == 0
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(
+                                left: 20,
+                                top: 20,
                               ),
-                            );
-                          })
+                              child: Text(
+                                'Categories',
+                                style: TextStyle(
+                                  color: Color(
+                                    0xff4B57A3,
+                                  ),
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                  itemCount:
+                                      categoriesProvider.categories.length,
+                                  itemBuilder: (context, index) {
+                                    // card with listtilebar at bottom
+                                    return CustomGridView(
+                                      index: index,
+                                      deleteCategory: () async {
+                                        await categoriesProvider
+                                            .removeCategory(index)
+                                            .then(
+                                          (value) {
+                                            setState(() {});
+                                          },
+                                        );
+                                      },
+                                    );
+                                  }),
+                            ),
+                          ],
+                        )
                       // Below will be code of IMP category
                       : Container(),
-                ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           bottomSheetCategories(context, dialogContext);
