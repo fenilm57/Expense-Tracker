@@ -75,6 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final categoriesProvider =
         Provider.of<CatagoriesList>(context, listen: false);
     final dialogContext = context;
+    print(
+        "categoriesProvider.categories.length :${categoriesProvider.categories.length}");
 
     final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
@@ -104,49 +106,52 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: isLoading
+      body: categoriesProvider.categories.length == 0
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: Text(
+                'No Categories',
+                style: TextStyle(color: Colors.black),
+              ),
             )
-          : RefreshIndicator(
-              onRefresh: () {
-                return refreshPage(context).then((value) {
-                  setState(() {});
-                });
-              },
-              child: _selectedIndex == 0
-                  ? GridView.builder(
-                      itemCount: categoriesProvider.categories.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 250,
-                        mainAxisExtent: 180,
-                      ),
-                      itemBuilder: (context, index) {
-                        return SizedBox(
-                          width: 10,
-                          height: 10,
-                          child: categoriesProvider.categories.isEmpty
-                              ? const Center(
-                                  child: Text('No Expense Yet'),
-                                )
-                              : CustomGridView(
-                                  index: index,
-                                  deleteCategory: () async {
-                                    await categoriesProvider
-                                        .removeCategory(index)
-                                        .then(
-                                      (value) {
-                                        setState(() {});
-                                      },
-                                    );
-                                  },
-                                ),
-                        );
-                      })
-                  // Below will be code of IMP category
-                  : Container(),
-            ),
+          : isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : RefreshIndicator(
+                  onRefresh: () {
+                    return refreshPage(context).then((value) {
+                      setState(() {});
+                    });
+                  },
+                  child: _selectedIndex == 0
+                      ? GridView.builder(
+                          itemCount: categoriesProvider.categories.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 250,
+                            mainAxisExtent: 180,
+                          ),
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              width: 10,
+                              height: 10,
+                              child: CustomGridView(
+                                index: index,
+                                deleteCategory: () async {
+                                  await categoriesProvider
+                                      .removeCategory(index)
+                                      .then(
+                                    (value) {
+                                      setState(() {});
+                                    },
+                                  );
+                                },
+                              ),
+                            );
+                          })
+                      // Below will be code of IMP category
+                      : Container(),
+                ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           bottomSheetCategories(context, dialogContext);
