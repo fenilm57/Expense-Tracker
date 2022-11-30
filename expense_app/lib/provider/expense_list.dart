@@ -107,10 +107,15 @@ class ExpenseList extends ChangeNotifier {
         '/categories/$categoryId/expenses/$expenseId.json');
     if (expenses[index].image ==
         'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg') {
+      await http.delete(url).then((value) {
+        _expenses.removeAt(index);
+      });
+      notifyListeners();
     } else {
       await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
-      await http.delete(url);
-      _expenses.removeAt(index);
+      await http.delete(url).then((value) {
+        _expenses.removeAt(index);
+      });
       notifyListeners();
     }
     await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
