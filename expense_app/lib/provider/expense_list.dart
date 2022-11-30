@@ -105,6 +105,14 @@ class ExpenseList extends ChangeNotifier {
       int index, String categoryId, String expenseId) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$categoryId/expenses/$expenseId.json');
+    if (expenses[index].image ==
+        'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg') {
+    } else {
+      await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
+      await http.delete(url);
+      _expenses.removeAt(index);
+      notifyListeners();
+    }
     await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
     await http.delete(url);
     _expenses.removeAt(index);

@@ -356,9 +356,10 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                           onPressed: () {
                                                             setState(() {
                                                               showDeleteDialog(
-                                                                  context, () {
+                                                                  context,
+                                                                  () async {
                                                                 print("Delete");
-                                                                provider
+                                                                await provider
                                                                     .removeExpense(
                                                                         index,
                                                                         widget
