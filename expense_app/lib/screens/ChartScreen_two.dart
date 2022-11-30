@@ -12,7 +12,12 @@ class ChartApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.blue),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData().copyWith(
+        appBarTheme: const AppBarTheme(
+          color: Color(0xff4B57A3), //<-- SEE HERE
+        ),
+      ),
       home: _MyHomePage(index: index, categories: categories),
     );
   }
@@ -28,13 +33,6 @@ class _MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-
-// class _SalesData {
-//   _SalesData(this.year, this.sales);
-
-//   final String year;
-//   final double sales;
-// }
 
 class ExpenseData {
   final String name;
@@ -69,46 +67,9 @@ class _MyHomePageState extends State<_MyHomePage> {
     return chartData;
   }
 
-  void _onItemTapped(int index, BuildContext context, dynamic categories) {
-    setState(() {
-      _selectedIndex = index;
-      print(_selectedIndex);
-    });
-
-    if (_selectedIndex == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => HomeScreen(),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expense chart'),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => _onItemTapped(
-          index,
-          context,
-          widget.categories,
-        ),
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Charts',
-          ),
-        ],
-      ),
       body: Column(
         children: [
           //Initialize the chart widget

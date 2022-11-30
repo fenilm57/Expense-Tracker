@@ -52,20 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _selectedIndex = index;
       print(_selectedIndex);
     });
-
-    if (_selectedIndex == 0) {
-      //
-    } else if (_selectedIndex == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (ctx) => ChartApp(
-            index: index,
-            categories: categories,
-          ),
-        ),
-      );
-    } else {}
   }
 
   @override
@@ -165,17 +151,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         )
                       // Below will be code of IMP category
-                      : Container(),
+                      : ChartApp(
+                          index: _selectedIndex,
+                          categories: categoriesProvider),
             ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(
-          0xff4B57A3,
-        ),
-        onPressed: () {
-          bottomSheetCategories(context, dialogContext);
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: _selectedIndex == 0
+          ? FloatingActionButton(
+              backgroundColor: const Color(
+                0xff4B57A3,
+              ),
+              onPressed: () {
+                bottomSheetCategories(context, dialogContext);
+              },
+              child: const Icon(Icons.add),
+            )
+          : Container(),
     );
   }
 
