@@ -130,6 +130,7 @@ class CatagoriesList extends ChangeNotifier {
         },
       ),
     );
+    print("Categories length = ${categories.length}");
     _categories[index] = Category(
       id: id,
       name: name,

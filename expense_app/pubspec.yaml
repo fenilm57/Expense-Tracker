@@ -63,12 +63,13 @@ flutter:
     - assets/images/golds.jpeg
     - assets/images/others.jpeg
     - assets/images/stocks.jpeg
-    - assets/images/
+    - assets/images/google_logo.png
     - assets/images/emegency.jpeg
     - assets/images/grocery.jpeg
     - assets/images/investment.jpeg
     - assets/images/travelling.jpeg
     - assets/images/background.jpeg
+    - assets/images/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
   # For details regarding adding assets from package dependencies, see

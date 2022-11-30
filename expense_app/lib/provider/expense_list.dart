@@ -55,7 +55,7 @@ class ExpenseList extends ChangeNotifier {
         '/categories/$cateroryId/expenses.json');
     var imageUrl = '';
 
-    if (image.path == "assets/images/google_logo.png") {
+    if (image.path == "assets/images/emergency.jpeg") {
       imageUrl =
           'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg';
     } else {
@@ -118,10 +118,6 @@ class ExpenseList extends ChangeNotifier {
       });
       notifyListeners();
     }
-    await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
-    await http.delete(url);
-    _expenses.removeAt(index);
-    notifyListeners();
   }
 
   Future<void> updateExpense({
@@ -139,7 +135,7 @@ class ExpenseList extends ChangeNotifier {
     var imageUrl = expenses[index].image;
 
     if ((imageUrl).isEmpty) {
-      if (image.path == "assets/images/google_logo.png") {
+      if (image.path == "assets/images/emergency.jpeg") {
         imageUrl =
             'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg';
       } else {

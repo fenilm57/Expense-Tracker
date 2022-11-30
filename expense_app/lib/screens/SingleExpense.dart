@@ -314,6 +314,9 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                                 builder:
                                                                     (context) =>
                                                                         EditExpense(
+                                                                  categoryIndex:
+                                                                      widget
+                                                                          .index,
                                                                   index: index,
                                                                   expenses:
                                                                       expenses,
@@ -621,11 +624,12 @@ class _AddExpenseState extends State<AddExpense> {
                                 Provider.of<CatagoriesList>(context,
                                     listen: false);
 
-                            image ??= File("assets/images/google_logo.png");
+                            image ??= File("assets/images/emergency.jpeg");
                             // Add expense
                             setState(() {
                               isLoading = true;
                             });
+                            print("Adding Index: ${widget.index}");
                             await provider
                                 .addExpense(
                                     cateroryId: widget.categoryId,
@@ -690,12 +694,14 @@ class BigImage extends StatelessWidget {
 class EditExpense extends StatefulWidget {
   final int index;
   final expenses;
+  final int categoryIndex;
   final String categoryId;
   const EditExpense({
     super.key,
     required this.index,
     required this.expenses,
     required this.categoryId,
+    required this.categoryIndex,
   });
 
   @override
@@ -878,7 +884,7 @@ class _EditExpenseState extends State<EditExpense> {
                     onPressed: (namecontroller.value.text.isNotEmpty &&
                             spentcontroller.value.text.isNotEmpty)
                         ? () async {
-                            image ??= File("assets/images/google_logo.png");
+                            image ??= File("assets/images/emergency.jpeg");
 
                             setState(() {
                               isLoading = true;
@@ -887,6 +893,7 @@ class _EditExpenseState extends State<EditExpense> {
                             final categoriesProvider =
                                 Provider.of<CatagoriesList>(context,
                                     listen: false);
+                            print("Cateory Index: ${widget.index}");
                             await provider
                                 .updateExpense(
                               categoryId: widget.categoryId,
@@ -898,15 +905,17 @@ class _EditExpenseState extends State<EditExpense> {
                               image: image!,
                             )
                                 .then((value) async {
+                              // need index of category here in place of expense index
                               await provider.sum(
                                 id: widget.categoryId,
                                 budget: categoriesProvider
-                                    .categories[widget.index].budget,
+                                    .categories[widget.categoryIndex].budget,
                                 imp: categoriesProvider
-                                    .categories[widget.index].impCategory,
+                                    .categories[widget.categoryIndex]
+                                    .impCategory,
                                 index: widget.index,
                                 name: categoriesProvider
-                                    .categories[widget.index].name,
+                                    .categories[widget.categoryIndex].name,
                               );
                               setState(() {
                                 isLoading = false;

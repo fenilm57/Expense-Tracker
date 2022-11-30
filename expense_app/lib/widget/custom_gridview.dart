@@ -33,8 +33,6 @@ class _CustomGridViewState extends State<CustomGridView> {
   Widget build(BuildContext context) {
     final categories =
         Provider.of<CatagoriesList>(context, listen: false).categories;
-    final impCategories =
-        Provider.of<CatagoriesList>(context, listen: false).impCategories;
     final categoriesProvider =
         Provider.of<CatagoriesList>(context, listen: false);
     return Padding(
@@ -43,6 +41,7 @@ class _CustomGridViewState extends State<CustomGridView> {
         borderRadius: BorderRadius.circular(25),
         child: GestureDetector(
           onTap: () {
+            print("GridIndex: ${widget.index}");
             Navigator.push(
               context,
               MaterialPageRoute(
