@@ -89,7 +89,7 @@ class _MyHomePageState extends State<_MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Syncfusion Flutter chart'),
+        title: const Text('Expense chart'),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

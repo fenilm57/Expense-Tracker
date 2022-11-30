@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:expense_app/provider/auth.dart';
+import 'package:expense_app/screens/home_screen.dart';
 import 'package:expense_app/widget/CustomElevatedButton.dart';
 import 'package:expense_app/widget/CustomTextField.dart';
 import 'package:expense_app/widget/login.dart';
@@ -134,15 +135,75 @@ class _AuthScreenState extends State<AuthScreen> {
                           ? CustomElevatedButton(
                               text: 'Sign Up',
                               onPressed: () {
-                                // Provider.of<Auth>(context, listen: false)
-                                //     .login(_email.text, _password.text);
+                                if (_password.text == _confirmPassword.text) {
+                                  Provider.of<Auth>(context, listen: false)
+                                      .signup(_email.text, _password.text)
+                                      .catchError((error) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text(
+                                          error.toString(),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Okay'),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(builder: ((context) {
+                                    //     return HomeScreen();
+                                    //   })),
+                                    // );
+                                  });
+                                } else {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title:
+                                          const Text('Password does not match'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Okay'),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
                               },
                             )
                           : CustomElevatedButton(
                               text: 'Login',
                               onPressed: () {
-                                // Provider.of<Auth>(context, listen: false)
-                                //     .login(_email.text, _password.text);
+                                Provider.of<Auth>(context, listen: false)
+                                    .signIn(_email.text, _password.text)
+                                    .catchError((error) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(
+                                        error.toString(),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Okay'),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                });
                               },
                             ),
                       const SizedBox(
