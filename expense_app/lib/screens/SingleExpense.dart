@@ -356,8 +356,8 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                       ),
                                                       PopupMenuItem(
                                                         child: TextButton(
-                                                          onPressed: () {
-                                                            showDeleteDialog(
+                                                          onPressed: () async {
+                                                            await showDeleteDialog(
                                                                 context,
                                                                 () async {
                                                               final categoriesProvider =
@@ -406,11 +406,11 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                                 setState(() {
                                                                   isLoading =
                                                                       false;
-                                                                  Navigator.pop(
-                                                                      context);
                                                                 });
                                                               });
                                                             });
+                                                            Navigator.pop(
+                                                                context);
                                                           },
                                                           child: const Text(
                                                               "Delete"),

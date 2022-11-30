@@ -119,7 +119,6 @@ class CatagoriesList extends ChangeNotifier {
   }) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$id.json');
-    print("ids $id");
     await http.patch(
       url,
       body: json.encode(
@@ -131,8 +130,9 @@ class CatagoriesList extends ChangeNotifier {
         },
       ),
     );
-    if (!realUpdate) {
+    if (realUpdate) {
       print("Categories length = ${categories.length}");
+    } else {
       _categories[index] = Category(
         id: id,
         name: name,

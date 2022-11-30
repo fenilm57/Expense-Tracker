@@ -28,8 +28,8 @@ class ExpenseList extends ChangeNotifier {
     }
     calc = total;
     CatagoriesList catagoriesList = CatagoriesList();
-    // print(index);
 
+    print("Inside Expense List");
     catagoriesList.updateCategories(
       spent: total,
       id: id,
