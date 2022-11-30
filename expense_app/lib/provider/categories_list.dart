@@ -115,6 +115,7 @@ class CatagoriesList extends ChangeNotifier {
     bool imp = false,
     required int index,
     required double spent,
+    bool realUpdate = false,
   }) async {
     var url = Uri.https('expense-tracker-9be0b-default-rtdb.firebaseio.com',
         '/categories/$id.json');
@@ -130,14 +131,16 @@ class CatagoriesList extends ChangeNotifier {
         },
       ),
     );
-    print("Categories length = ${categories.length}");
-    _categories[index] = Category(
-      id: id,
-      name: name,
-      budget: budget,
-      impCategory: imp,
-      spent: spent,
-    );
+    if (!realUpdate) {
+      print("Categories length = ${categories.length}");
+      _categories[index] = Category(
+        id: id,
+        name: name,
+        budget: budget,
+        impCategory: imp,
+        spent: spent,
+      );
+    }
 
     notifyListeners();
   }

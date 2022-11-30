@@ -37,6 +37,7 @@ class ExpenseList extends ChangeNotifier {
       name: name,
       budget: budget,
       imp: imp,
+      realUpdate: true,
     );
 
     notifyListeners();
@@ -109,14 +110,15 @@ class ExpenseList extends ChangeNotifier {
         'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg') {
       await http.delete(url).then((value) {
         _expenses.removeAt(index);
+
+        notifyListeners();
       });
-      notifyListeners();
     } else {
       await FirebaseStorage.instance.refFromURL(expenses[index].image).delete();
       await http.delete(url).then((value) {
         _expenses.removeAt(index);
+        notifyListeners();
       });
-      notifyListeners();
     }
   }
 

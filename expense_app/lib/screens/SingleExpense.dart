@@ -357,24 +357,57 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                       PopupMenuItem(
                                                         child: TextButton(
                                                           onPressed: () {
-                                                            setState(() {
-                                                              showDeleteDialog(
-                                                                  context,
-                                                                  () async {
-                                                                print("Delete");
+                                                            showDeleteDialog(
+                                                                context,
+                                                                () async {
+                                                              final categoriesProvider =
+                                                                  Provider.of<
+                                                                          CatagoriesList>(
+                                                                      context,
+                                                                      listen:
+                                                                          false);
+
+                                                              setState(() {
+                                                                isLoading =
+                                                                    true;
+                                                              });
+                                                              await provider
+                                                                  .removeExpense(
+                                                                      index,
+                                                                      widget
+                                                                          .categoryId,
+                                                                      expenses[
+                                                                              index]
+                                                                          .id)
+                                                                  .then(
+                                                                      (value) async {
                                                                 await provider
-                                                                    .removeExpense(
-                                                                        index,
-                                                                        widget
-                                                                            .categoryId,
-                                                                        expenses[index]
-                                                                            .id)
-                                                                    .then(
-                                                                        (value) {
-                                                                  setState(() {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  });
+                                                                    .sum(
+                                                                  id: widget
+                                                                      .categoryId,
+                                                                  budget: categoriesProvider
+                                                                      .categories[
+                                                                          widget
+                                                                              .index]
+                                                                      .budget,
+                                                                  imp: categoriesProvider
+                                                                      .categories[
+                                                                          widget
+                                                                              .index]
+                                                                      .impCategory,
+                                                                  index: widget
+                                                                      .index,
+                                                                  name: categoriesProvider
+                                                                      .categories[
+                                                                          widget
+                                                                              .index]
+                                                                      .name,
+                                                                );
+                                                                setState(() {
+                                                                  isLoading =
+                                                                      false;
+                                                                  Navigator.pop(
+                                                                      context);
                                                                 });
                                                               });
                                                             });
