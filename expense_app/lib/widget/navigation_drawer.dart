@@ -30,7 +30,7 @@ class _NavigationDrawerWidgetState extends State<NavigationDrawerWidget> {
     final provider = Provider.of<GoogleSignInProvider>(context, listen: false);
     return Drawer(
       child: Container(
-        color: const Color.fromRGBO(50, 75, 205, 1),
+        color: Colors.white,
         child: Column(children: [
           user == null ? Container() : HeaderNavBar(user: user),
           const Padding(
@@ -106,13 +106,14 @@ class SingleNavItem extends StatelessWidget {
         child: ListTile(
           leading: Icon(
             icon,
-            color: Colors.white,
+            //#
+            color: const Color(0xff9BA3DA),
           ),
           title: Text(
             text,
             style: const TextStyle(
               fontSize: 20,
-              color: Colors.white,
+              color: Color(0xff4B57A3),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -134,39 +135,43 @@ class HeaderNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     print('User: $user');
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Container(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(user.photoURL!),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Text(
-              user.displayName!,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+      padding: const EdgeInsets.only(top: 40),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          color: const Color(0xff4B57A3),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 40,
+                backgroundImage: NetworkImage(user.photoURL!),
               ),
-            ),
-            const SizedBox(
-              height: 5,
-            ),
-            Text(
-              user.email!,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
+              const SizedBox(
+                height: 15,
               ),
-            )
-          ],
+              Text(
+                user.displayName!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                user.email!,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

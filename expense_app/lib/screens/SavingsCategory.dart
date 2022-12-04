@@ -8,23 +8,23 @@ class SavingsCategory extends StatelessWidget {
 
   List<SavingCategory> categories = [
     SavingCategory(
-      image: 'assets/images/house.jpeg',
+      image: 'assets/images/housing.jpeg',
       title: 'Housing',
     ),
     SavingCategory(
-      image: 'assets/images/house.jpeg',
+      image: 'assets/images/car.png',
       title: 'Vehicle',
     ),
     SavingCategory(
-      image: 'assets/images/house.jpeg',
+      image: 'assets/images/travelling.jpeg',
       title: 'Travelling',
     ),
     SavingCategory(
-      image: 'assets/images/house.jpeg',
+      image: 'assets/images/investment.jpeg',
       title: 'Investment',
     ),
     SavingCategory(
-      image: 'assets/images/house.jpeg',
+      image: 'assets/images/emegency.jpeg',
       title: 'Emergency',
     ),
     SavingCategory(
@@ -37,7 +37,11 @@ class SavingsCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Savings'),
+        title: const Text(
+          'Savings',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.only(right: 10.0),

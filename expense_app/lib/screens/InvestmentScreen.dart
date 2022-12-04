@@ -52,8 +52,10 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
       ),
       // FAB
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          bottomSheetCategories(context);
+        onPressed: () async {
+          await bottomSheetCategories(context).then((value) {
+            setState(() {});
+          });
           savingAmount.clear();
           date = 'Select Date';
         },
@@ -166,7 +168,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                                           savingAmount.clear();
                                           date = 'Select Date';
                                         },
-                                        color: Colors.red,
+                                        color: Colors.red[900],
                                         icon: const Icon(
                                           Icons.delete,
                                         ),
@@ -417,7 +419,6 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                 text: 'Add Investment',
                 onPressed: savingAmount.value.text.isNotEmpty
                     ? () {
-                        Navigator.pop(context);
                         setState(() {
                           _isLoading = true;
                         });
@@ -430,6 +431,7 @@ class _InvestmentScreenState extends State<InvestmentScreen> {
                             .then((value) {
                           setState(() {
                             _isLoading = false;
+                            Navigator.pop(context);
                           });
                         });
                         savingAmount.clear();

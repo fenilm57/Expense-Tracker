@@ -174,14 +174,19 @@ class _HomeScreenState extends State<HomeScreen> {
     final provider = Provider.of<CatagoriesList>(context, listen: false);
     return showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+      // top left and top right radius
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
       ),
+
       builder: (context) {
         return Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 40.0, bottom: 20.0),
               child: Text(
                 "Add Category",
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(

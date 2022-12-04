@@ -77,7 +77,7 @@ class _MyHomePageState extends State<_MyHomePage> {
             title: ChartTitle(
               text: 'The values are in CAD',
               textStyle: const TextStyle(
-                fontSize: 30,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),

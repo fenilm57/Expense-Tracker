@@ -60,7 +60,9 @@ class _SavingScreenState extends State<SavingScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await bottomSheetCategories(context);
+          await bottomSheetCategories(context).then((value) {
+            setState(() {});
+          });
           date = 'Select Date';
         },
         backgroundColor: Color(0xff4B57A3),
@@ -171,7 +173,7 @@ class _SavingScreenState extends State<SavingScreen> {
                                             setState(() {});
                                           });
                                         },
-                                        color: Colors.red,
+                                        color: Colors.red[900],
                                         icon: const Icon(
                                           Icons.delete,
                                         ),
@@ -386,7 +388,6 @@ class _SavingScreenState extends State<SavingScreen> {
                 text: 'Add Saving',
                 onPressed: savingAmount.value.text.isNotEmpty
                     ? () {
-                        Navigator.pop(context);
                         setState(() {
                           _isLoading = true;
                         });
@@ -399,6 +400,7 @@ class _SavingScreenState extends State<SavingScreen> {
                             .then((value) {
                           setState(() {
                             _isLoading = false;
+                            Navigator.pop(context);
                           });
                         });
                         savingAmount.clear();

@@ -36,7 +36,11 @@ class InvestmentCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Investments'),
+        title: const Text(
+          'Investments',
+          style: TextStyle(fontSize: 20),
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.only(right: 10.0),
