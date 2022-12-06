@@ -111,25 +111,21 @@ class _CustomGridViewState extends State<CustomGridView> {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
+                          const Spacer(),
                           // delete button
-                          Padding(
-                            padding: const EdgeInsets.only(left: 80.0),
-                            child: IconButton(
-                              onPressed: () {
-                                showDeleteDialog(context, categoriesProvider);
-                              },
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                                size: 30,
-                              ),
+                          IconButton(
+                            onPressed: () {
+                              showDeleteDialog(context, categoriesProvider);
+                            },
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                              size: 30,
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 20.0),
+                            padding:
+                                const EdgeInsets.only(left: 20.0, right: 35),
                             child: IconButton(
                               onPressed: () {
                                 namecontroller.text =
@@ -216,7 +212,7 @@ class _CustomGridViewState extends State<CustomGridView> {
               child: Text(
                 "Edit Category",
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Color(
+                      color: const Color(
                         0xff4B57A3,
                       ),
                     ),

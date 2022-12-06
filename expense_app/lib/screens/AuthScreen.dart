@@ -129,7 +129,28 @@ class _AuthScreenState extends State<AuthScreen> {
                             )
                           : Container(),
                       const SizedBox(
-                        height: 80,
+                        height: 30,
+                      ),
+                      !showConfirmPassword
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 30.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: const [
+                                  Text(
+                                    "Forgot Password?",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(),
+                      const SizedBox(
+                        height: 50,
                       ),
                       showConfirmPassword
                           ? CustomElevatedButton(
@@ -155,12 +176,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                         ],
                                       ),
                                     );
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: ((context) {
-                                    //     return HomeScreen();
-                                    //   })),
-                                    // );
                                   });
                                 } else {
                                   showDialog(
@@ -212,14 +227,23 @@ class _AuthScreenState extends State<AuthScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Don\'t have an account?',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black54,
-                            ),
-                          ),
+                          showConfirmPassword
+                              ? const Text(
+                                  'Already Have account?',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                  ),
+                                )
+                              : const Text(
+                                  'Don\'t have an account?',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black54,
+                                  ),
+                                ),
                           TextButton(
                             onPressed: () {
                               setState(() {

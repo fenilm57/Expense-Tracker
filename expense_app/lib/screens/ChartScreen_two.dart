@@ -1,4 +1,6 @@
+import 'package:expense_app/provider/categories_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
@@ -100,6 +102,28 @@ class _MyHomePageState extends State<_MyHomePage> {
                   ),
                 ),
                 enableTooltip: true,
+              ),
+            ],
+          ),
+          SfCartesianChart(
+            primaryXAxis: CategoryAxis(),
+            legend: Legend(
+              isVisible: true,
+              overflowMode: LegendItemOverflowMode.wrap,
+              alignment: ChartAlignment.center,
+            ),
+            series: <ChartSeries>[
+              LineSeries<ExpenseData, String>(
+                dataSource: _chartData,
+                xValueMapper: (ExpenseData expense, _) => expense.name,
+                yValueMapper: (ExpenseData expense, _) => expense.budget,
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: true,
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           )
