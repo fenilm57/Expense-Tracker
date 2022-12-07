@@ -241,8 +241,8 @@ class _SingleExpenseScreenState extends State<SingleExpenseScreen> {
                                                 borderRadius:
                                                     BorderRadius.circular(15),
                                               ),
-                                              tileColor:
-                                                  const Color(0xffa7a6a2),
+                                              tileColor: const Color.fromARGB(
+                                                  255, 232, 231, 227),
                                               leading: ClipRRect(
                                                 borderRadius:
                                                     BorderRadius.circular(30),
